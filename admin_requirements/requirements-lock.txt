@@ -1,5 +1,5 @@
 # ==============================================================================
-# Tryolabs — Google Antigravity Workshop (Telecom & Retail Editions)
+# Tryolabs — Google Antigravity Workshop: Retail Edition (Retail Pulse — antigravity-workshop-retail)
 # Complete Pinned Python Dependency Lockfile (Direct + Transitive Packages)
 # Verified with Python 3.10 / 3.11 / 3.12 and uv / pip
 #

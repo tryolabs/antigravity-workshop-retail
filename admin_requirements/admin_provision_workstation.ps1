@@ -1,11 +1,8 @@
 # ==============================================================================
 # Tryolabs — Google Antigravity Workshop: IT Admin Workstation Provisioner
-# Target OS: Windows 10 / 11 (64-bit) — Run in Elevated PowerShell (Admin)
-#
-# Purpose:
-#   Pre-provisions and verifies a Windows attendee workstation so that an
-#   unprivileged attendee (Standard User with NO admin rights) can complete
-#   all 4 hands-on labs (Telecom Nexus & Retail Pulse).
+# Edition   : Retail Edition (Retail Pulse)
+# Repository: antigravity-workshop-retail
+# Target OS : Windows 10 / 11 (64-bit) — Run in Elevated PowerShell (Admin)
 #
 # Usage:
 #   .\admin_provision_workstation.ps1 -AttendeeUser "CORP\jdoe"
@@ -19,6 +16,7 @@ param(
 $ErrorActionPreference = "Continue"
 Write-Host "======================================================================" -ForegroundColor Cyan
 Write-Host "  Tryolabs • Google Antigravity Workshop — Windows IT Admin Provisioner" -ForegroundColor Cyan
+Write-Host "  Edition              : Retail Edition (Retail Pulse)" -ForegroundColor Cyan
 Write-Host "  Target Attendee User : $AttendeeUser"
 Write-Host "======================================================================" -ForegroundColor Cyan
 
@@ -44,16 +42,17 @@ foreach ($t in $tools) {
     }
 }
 
-Write-Host "`n[Step 2/3] Provisioning Workshop Python Virtual Environment (.venv)..." -ForegroundColor Yellow
+Write-Host "`n[Step 2/3] Provisioning antigravity-workshop-retail Virtual Environment (.venv)..." -ForegroundColor Yellow
 $RepoDirs = @(
     (Join-Path $PSScriptRoot ".."),
-    (Join-Path $PSScriptRoot "..\antigravity-workshop-telecom"),
+    (Join-Path $PSScriptRoot "..\..\antigravity-workshop-retail"),
     (Join-Path $PSScriptRoot "..\antigravity-workshop-retail")
 )
 
 foreach ($dir in $RepoDirs) {
     $reqFile = Join-Path $dir "requirements.txt"
-    if (Test-Path $reqFile) {
+    $labsDir = Join-Path $dir "labs"
+    if ((Test-Path $reqFile) -and (Test-Path $labsDir)) {
         $resolved = (Resolve-Path $dir).Path
         Write-Host "  -> Configuring repository: $resolved" -ForegroundColor Cyan
         Push-Location $resolved
@@ -71,13 +70,13 @@ foreach ($dir in $RepoDirs) {
                 .\.venv\Scripts\pip.exe install --upgrade pip
                 .\.venv\Scripts\pip.exe install -r requirements.txt
             }
-            # Grant Modify permissions to the non-admin attendee user
             icacls "$resolved" /grant "${AttendeeUser}:(OI)(CI)M" /T /Q | Out-Null
             Write-Host "  [OK] Granted Modify permissions on $resolved to $AttendeeUser" -ForegroundColor Green
         }
         .\.venv\Scripts\python.exe -c "import fastapi, uvicorn, pydantic, pytest, httpx, mcp, google.adk, google.genai; print('  [OK] All workshop Python libraries verified!')"
         Pop-Location
+        break
     }
 }
 
-Write-Host "`n[Step 3/3] Workstation Audit Complete!" -ForegroundColor Green
+Write-Host "`n[Step 3/3] Retail Edition (Retail Pulse) Workstation Audit Complete!" -ForegroundColor Green

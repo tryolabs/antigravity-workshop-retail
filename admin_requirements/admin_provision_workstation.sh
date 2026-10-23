@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # Tryolabs — Google Antigravity Workshop: IT Admin Workstation Provisioner
-# Target OS: macOS (13+) & Linux (Ubuntu 22.04+, Debian 12+, RHEL 9+)
+# Edition   : Retail Edition (Retail Pulse)
+# Repository: antigravity-workshop-retail
+# Target OS : macOS (13+) & Linux (Ubuntu 22.04+, Debian 12+, RHEL 9+)
 #
 # Purpose:
 #   Pre-provisions and verifies an attendee workstation so that an unprivileged
 #   attendee (with NO sudo/admin rights and NO package install permissions) can
-#   complete all 4 hands-on labs (Telecom Nexus & Retail Pulse).
+#   complete all 4 hands-on labs in antigravity-workshop-retail.
 #
-# Usage (as IT Admin / root or standard check):
+# Usage:
 #   sudo ./admin_provision_workstation.sh --user <attendee_username>
 #   ./admin_provision_workstation.sh --verify-only
 # ==============================================================================
@@ -36,6 +38,7 @@ done
 
 echo "======================================================================"
 echo "  Tryolabs • Google Antigravity Workshop — IT Admin Workstation Audit"
+echo "  Edition                 : Retail Edition (Retail Pulse)"
 echo "  Target Attendee Account : ${ATTENDEE_USER}"
 echo "  Mode                    : $( [[ $VERIFY_ONLY -eq 1 ]] && echo 'VERIFY ONLY' || echo 'PROVISION & VERIFY' )"
 echo "======================================================================"
@@ -92,7 +95,7 @@ provision_repo() {
   fi
   echo ""
   echo "----------------------------------------------------------------------"
-  echo "  Processing Workshop Repository: $repo_dir"
+  echo "  Processing Retail Edition (Retail Pulse) Repository: $repo_dir"
   echo "----------------------------------------------------------------------"
   cd "$repo_dir"
 
@@ -116,7 +119,7 @@ provision_repo() {
       ./.venv/bin/pip install --quiet -r requirements.txt
     fi
 
-    echo "  -> Running initial database seed & Lab 01 starter state..."
+    echo "  -> Running initial database seed (data/retail_pulse.db) & Lab 01 starter state..."
     bash ./install.sh
   fi
 
@@ -153,25 +156,22 @@ print('  [OK]   All workshop Python packages imported successfully!')
 }
 
 echo ""
-echo "[Step 3/4] Provisioning & Verifying Workshop Repositories..."
-# Check if script is inside a repo or parent workspace
+echo "[Step 3/4] Provisioning & Verifying antigravity-workshop-retail..."
 if [[ -f "$SCRIPT_DIR/requirements.txt" ]] && [[ -d "$SCRIPT_DIR/labs" ]]; then
   provision_repo "$SCRIPT_DIR"
 elif [[ -f "$SCRIPT_DIR/../requirements.txt" ]] && [[ -d "$SCRIPT_DIR/../labs" ]]; then
   provision_repo "$(cd "$SCRIPT_DIR/.." && pwd)"
+elif [[ -d "$SCRIPT_DIR/../../antigravity-workshop-retail" ]]; then
+  provision_repo "$(cd "$SCRIPT_DIR/../../antigravity-workshop-retail" && pwd)"
+elif [[ -d "$SCRIPT_DIR/../antigravity-workshop-retail" ]]; then
+  provision_repo "$(cd "$SCRIPT_DIR/../antigravity-workshop-retail" && pwd)"
 fi
 
-for candidate in   "$SCRIPT_DIR/antigravity-workshop-telecom"   "$SCRIPT_DIR/antigravity-workshop-retail"   "$SCRIPT_DIR/../antigravity-workshop-telecom"   "$SCRIPT_DIR/../antigravity-workshop-retail"; do
-  if [[ -d "$candidate" ]]; then
-    provision_repo "$(cd "$candidate" && pwd)"
-  fi
-done
-
 echo ""
-echo "[Step 4/4] Auditing Local Loopback Ports (8001, 8002, 8080)..."
+echo "[Step 4/4] Auditing Local Loopback Ports (8002, 8080)..."
 python3 -c "
 import socket
-for port in (8001, 8002, 8080):
+for port in (8002, 8080):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         s.bind(('127.0.0.1', port))
@@ -186,7 +186,7 @@ echo ""
 echo "======================================================================"
 echo "  Summary: ${PASS_COUNT} checks passed | ${WARN_COUNT} warnings | ${FAIL_COUNT} failures"
 if [[ $FAIL_COUNT -eq 0 ]]; then
-  echo "  [READY] Workstation is 100% ready for non-admin workshop attendees!"
+  echo "  [READY] Workstation is 100% ready for non-admin Retail Edition (Retail Pulse) attendees!"
 else
   echo "  [ACTION NEEDED] Please resolve the ${FAIL_COUNT} failed check(s) above."
   exit 1
