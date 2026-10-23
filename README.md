@@ -19,7 +19,7 @@ During peak seasonal events (Flash Sales / Black Friday), retail enterprises fac
 
 This repository supports **both Technical Engineers and Commercial/Operations Managers** working side by side:
 - **Technical Track (Software, Data & Platform Engineers)**: Debug Python/FastAPI microservices, write `pytest` suites, build FastMCP tools (`mcp_server/retail_mcp.py`), enforce deterministic `PreToolUse` hooks (`scripts/margin_guard_hook.py`), orchestrate multi-agent systems with **Google ADK (Agent Development Kit)** and **A2A (Agent2Agent Protocol)** (`src/agents/adk_a2a_orchestrator.py`), test interactively with **`adk web`** (`scripts/run_adk_web.sh`), and deploy to **Google Cloud Run + Gemini Enterprise** via **Terraform** (`infra/terraform/`).
-- **Commercial Track (Merchandising, Category Management & Supply Chain Operations)**: Audit CSV exports (`data/exports/`), encode corporate margin & OTIF rules (`GEMINI.md`, `.agents/rules/retail-standards.md`), create reusable executive audit skills (`.agents/skills/`), query live retail databases through natural-language MCP tools, and validate KPIs in the live **Retail Pulse Command Center** (`http://127.0.0.1:8000`) and **ADK Web UI** (`http://127.0.0.1:8080`).
+- **Commercial Track (Merchandising, Category Management & Supply Chain Operations)**: Audit CSV exports (`data/exports/`), encode corporate margin & OTIF rules (`GEMINI.md`, `.agents/rules/retail-standards.md`), create reusable executive audit skills (`.agents/skills/`), query live retail databases through natural-language MCP tools, and validate KPIs in the live **Retail Pulse Command Center** (`http://127.0.0.1:8002`) and **ADK Web UI** (`http://127.0.0.1:8080`).
 
 ---
 
@@ -89,10 +89,10 @@ Run the root installer to create the `.venv` virtual environment, install depend
 ```
 
 ### 2. Launch the Live Retail Pulse Command Center
-Start the FastAPI server and open `http://127.0.0.1:8000` in your browser:
+Start the FastAPI server and open `http://127.0.0.1:8002` in your browser:
 
 ```bash
-.venv/bin/uvicorn src.main:app --reload --port 8000
+.venv/bin/uvicorn src.main:app --reload --port 8002
 ```
 
 You will see the **Retail Pulse Command Center** (branded with **Delivered by Tryolabs**) displaying the initial crisis metrics:
@@ -145,8 +145,8 @@ Enterprise retail adopters require defense-in-depth across cloud identity, data 
 - **Tool Execution Policy**: Configure `strict`, `request-review`, `proceed-in-sandbox`, or `always-proceed` to govern when shell commands or file writes require human approval.
 - **Terminal Sandbox & Network Isolation**: Enforce OS-level sandboxing (`sandbox-exec` on macOS / container namespaces on Linux) and restrict outbound internet access.
 - **Non-Workspace File Access Protection**: Prevent agents from reading or modifying files outside the `/antigravity-workshop-retail` workspace boundary (protecting `~/.ssh`, `~/.aws`, and host credentials).
-- **Command Allowlist / Denylist & Browser Allowlist**: Allowlist safe test runners (`.venv/bin/python -m pytest`) while blocking destructive shell commands (`rm -rf`, `curl`) and restricting `/browser` to `http://127.0.0.1:8000`.
-- **Deterministic Lifecycle Hooks (`.agents/hooks.json`)**: Execute deterministic pre-tool validation (`scripts/margin_guard_hook.py`) before any file modification occurs, blocking 15% margin floor bypasses with exit code `2` and recording every decision to `data/logs/hook_compliance_audit.jsonl`.
+- **Command Allowlist / Denylist & Browser Allowlist**: Allowlist safe test runners (`.venv/bin/python -m pytest`) while blocking destructive shell commands (`rm -rf`, `curl`) and restricting `/browser` to `http://127.0.0.1:8002`.
+- **Deterministic Lifecycle Hooks (`.agents/hooks.json`)**: Execute deterministic pre-tool validation (`scripts/margin_guard_hook.py`) before any file modification occurs, blocking 15% margin floor bypasses with `"decision": "deny"` and recording every decision to `data/logs/hook_compliance_audit.jsonl`.
 
 ---
 

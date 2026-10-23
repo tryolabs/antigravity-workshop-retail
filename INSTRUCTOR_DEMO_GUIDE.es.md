@@ -15,9 +15,9 @@
    ```
 2. **Iniciar el Retail Pulse Command Center (Pestaña de Terminal 1 en Segundo Plano)**:
    ```bash
-   .venv/bin/uvicorn src.main:app --reload --port 8000
+   .venv/bin/uvicorn src.main:app --reload --port 8002
    ```
-3. **Abrir `http://127.0.0.1:8000` en Chrome**:
+3. **Abrir `http://127.0.0.1:8002` en Chrome**:
    - Verifica que el **logo de Tryolabs ("Delivered by Tryolabs")** aparezca en el encabezado superior.
    - Verifica que los 3 KPIs de crisis se muestren en rojo/ámbar:
      - **Margin Hold Orders**: `30` (`-$35,113.25` de fuga de margen)
@@ -47,7 +47,7 @@
 
 #### Puntos Clave
 - Da la bienvenida en nombre de **Tryolabs**. Explica que el taller une a **Ingenieros de Plataforma/Software** y **Líderes Comerciales/Merchandising/Supply Chain** alrededor de una crisis omnicanal realista de Black Friday (**Retail Pulse**).
-- Muestra `http://127.0.0.1:8000`. Señala que la plataforma está perdiendo `-$35,113.25` en 30 órdenes con descuentos apilados, dejando 35 órdenes VIP `DIAMOND`/`GOLD` (`>$250K` LTV) en riesgo de quiebre de stock por inventario BOPIS fantasma, y dejando `$98,250.00` en penalidades OTIF de proveedores sin reclamar.
+- Muestra `http://127.0.0.1:8002`. Señala que la plataforma está perdiendo `-$35,113.25` en 30 órdenes con descuentos apilados, dejando 35 órdenes VIP `DIAMOND`/`GOLD` (`>$250K` LTV) en riesgo de quiebre de stock por inventario BOPIS fantasma, y dejando `$98,250.00` en penalidades OTIF de proveedores sin reclamar.
 - Contrasta **Editor View** (para ediciones en línea síncronas con `Cmd+I` / `Ctrl+I`) con **Agent Manager (`Cmd+E` / `Ctrl+E`)** (para planificación asíncrona, ejecución de pruebas y delegación en subagentes).
 
 ---
@@ -65,8 +65,8 @@
 2. Pega el **Prompt 1A** (Técnico) o **Prompt 1B** (Comercial) de `labs/lab-01-margin-inventory-triage/PROMPTS.es.md` para diagnosticar el Bug #1A y el Bug #1B.
 3. Pega el **Prompt 2** (`/plan`) para generar el artefacto del plan de implementación.
 4. Selecciona `calculate_stacked_promo_price` en `src/services/promo_pricing.py`, presiona `Cmd+I` / `Ctrl+I` y aplica el piso de margen del 15% (`unit_cost_usd / (1.0 - minimum_margin_pct)`).
-5. Corrige `calculate_node_atp` en `src/services/inventory_atp.py` y ejecuta `./labs/lab-01-margin-inventory-triage/verify.sh`.
-6. En el navegador (`http://127.0.0.1:8000`), haz clic en **"1. Enforce 15% Margin Floor (Lab 01)"** y muestra cómo las órdenes retenidas por margen bajan de `30` a `0` (`$0.00` de pérdida).
+5. Corrige `calculate_node_atp` en `src/services/inventory_atp.py` y ejecuta `./labs/lab-01-margin-inventory-triage/verify.sh` (`6/6` aprobadas).
+6. En el navegador (`http://127.0.0.1:8002`), haz clic en **"1. Enforce 15% Margin Floor (Lab 01)"** y muestra cómo las órdenes retenidas por margen bajan de `30` a `0` (`$0.00` de pérdida).
 
 ---
 
@@ -98,12 +98,12 @@
 
 #### Pasos de Demostración en Vivo
 1. Ejecuta `./labs/lab-03-mcp-and-hooks/install.sh` y `./labs/lab-03-mcp-and-hooks/verify.sh`.
-2. Abre `mcp_server/retail_mcp.py` y completa las herramientas MCP junto con `.agents/mcp_config.json` y `.agents/hooks.json`.
+2. Abre `mcp_server/retail_mcp.py` (donde `query_true_atp_inventory` ya está implementada y faltan `audit_vendor_otif_contracts`, `simulate_promo_margin_guard` y `list_at_risk_vip_orders`) y completa las herramientas MCP junto con `.agents/mcp_config.json` y `.agents/hooks.json`.
 3. **Demostración Adversarial en Vivo del Hook**:
    ```bash
-   echo '{"tool_name":"edit_file","tool_input":{"Path":"src/services/promo_pricing.py","Replacement":"enforce_floor=False"}}' | .venv/bin/python scripts/margin_guard_hook.py
+   echo '{"toolCall":{"name":"edit_file","args":{"Path":"src/services/promo_pricing.py","Replacement":"enforce_floor=False"}}}' | .venv/bin/python scripts/margin_guard_hook.py --event PreToolUse
    ```
-   Muestra el bloqueo `[MARGIN_GUARD_HOOK BLOCKED]` (código de salida `2`) e inspecciona `data/logs/hook_compliance_audit.jsonl`.
+   Muestra la respuesta determinista en JSON (`{"decision": "deny", "reason": "Blocked by Retail Compliance Hook (SOX 404 / Gross Margin Protection)..."}`), inspecciona `data/logs/hook_compliance_audit.jsonl` y ejecuta `./labs/lab-03-mcp-and-hooks/verify.sh` (**13/13 pruebas acumuladas aprobadas**).
 4. Recorre las dos capas de seguridad empresarial documentadas en `labs/lab-03-mcp-and-hooks/README.es.md` (Google Cloud IAM + Cloud Audit Logs + VPC-SC + Controles Locales del Cliente Antigravity).
 
 ---
@@ -130,13 +130,13 @@
    ```
 6. **Demostración en Vivo de la Agent Card A2A y Handoff JSON-RPC 2.0**:
    ```bash
-   curl -s http://127.0.0.1:8000/.well-known/agent.json | python3 -m json.tool
+   curl -s http://127.0.0.1:8002/.well-known/agent.json | python3 -m json.tool
    ```
 7. **Demostración en Vivo de Cloud Run + Terraform + Registro en Gemini Enterprise**:
    ```bash
    ./labs/lab-04-multi-agent-capstone/deploy_gcp.sh --dry-run --project-id retail-pulse-enterprise --region us-central1 --gemini-app-id retail-pulse-ge-app
    ```
-8. Regresa a `http://127.0.0.1:8000` (o invoca el **Prompt 4B (`/browser`)**):
+8. Regresa a `http://127.0.0.1:8002` (o invoca el **Prompt 4B (`/browser`)**):
    - Haz clic en **"1. Enforce 15% Margin Floor (Lab 01)"** -> `0` órdenes retenidas por margen (`$0.00` de fuga).
    - Haz clic en **"2. Optimize Split-Shipment Routing (Lab 04)"** -> Las `35` órdenes VIP re-enrutadas (`$250,000+` LTV salvado, `$14,774.00` de margen neto post-envío preservado).
    - Haz clic en **"3. Claim OTIF Chargebacks (Lab 02/04)"** -> Los `6` contratos en incumplimiento marcados como `CHARGEBACK_CLAIMED` (`$98,250.00` recuperados).
@@ -152,5 +152,5 @@ Utiliza esta tabla de referencia durante la sesión de Q&A ejecutivo para explic
 | **Órdenes Retenidas por Margen (`MARGIN_HOLD`)** | `30` órdenes (`-$35,113.25` de fuga de margen negativo) | `0` órdenes (`$0.00` de fuga; ajustadas al piso de margen bruto `>= 15%`) | `tests/test_lab01_triage.py` |
 | **Órdenes VIP en Riesgo (`AT_RISK_STOCKOUT`)** | `35` órdenes VIP (`DIAMOND`/`GOLD`) (`>$250,000` de LTV expuesto) | `0` órdenes en riesgo (`35` re-enrutadas a `REROUTED_OPTIMAL` con `$14,774.00` de margen neto post-envío) | `tests/test_lab04_capstone.py` |
 | **Incumplimientos OTIF (`BREACH_DETECTED`)** | `6` contratos en incumplimiento (`$98,250.00` en penalidades no reclamadas) | `6` contratos actualizados a `CHARGEBACK_CLAIMED` (`$98,250.00` recuperados) | `tests/test_lab02_rules_skills.py` y `tests/test_lab04_capstone.py` |
-| **Auditoría del Hook `PreToolUse`** | Desprotegido ante ediciones `enforce_floor=False` | Bloqueo determinista con código `2` + bitácora JSONL en `data/logs/hook_compliance_audit.jsonl` | `tests/test_lab03_mcp_hooks.py` |
+| **Auditoría del Hook `PreToolUse`** | Desprotegido ante ediciones `enforce_floor=False` | Bloqueo determinista JSON `"decision": "deny"` + bitácora JSONL en `data/logs/hook_compliance_audit.jsonl` | `tests/test_lab03_mcp_hooks.py` |
 | **Sistema Multi-Agente Google ADK + A2A** | Flujos técnicos y comerciales desconectados | Handoff A2A `WMSInventoryATPAgent` -> `MerchandisingMarginOTIFAgent` + Terraform Cloud Run + Registro en Gemini Enterprise | `tests/test_lab04_capstone.py` (`20/20` pruebas en total) |

@@ -15,18 +15,19 @@ Even after encoding rules and skills (Lab 02), two major operational challenges 
 1. **Live System Grounding via Model Context Protocol (MCP)**:
    Neither engineers nor commercial category managers want to copy-paste raw SQL queries or CSV exports into chat windows. Instead, Antigravity should query the live `data/retail_pulse.db` SQLite database directly through structured **Model Context Protocol (MCP)** tools to inspect True ATP across nodes, audit breaching vendor OTIF contracts, simulate promotional margins before launch, and list VIP orders at risk of stockout.
 2. **Deterministic Guardrails & Enterprise Governance**:
-   Instructions in `.agents/rules/` guide the LLM's reasoning, but mission-critical compliance—such as blocking someone from disabling `enforce_floor=False` in `src/services/promo_pricing.py` or hardcoding `minimum_margin_pct` below `0.15` (`15%`)—requires **deterministic enforcement** that executes outside the LLM's probabilistic output, alongside **Google Cloud / Gemini Enterprise governance** and **Antigravity Client Sandbox & Permission controls**.
+   Instructions in `.agents/rules/` guide the LLM's reasoning, but mission-critical compliance—such as blocking destructive SQL mutations (`DROP`/`TRUNCATE`/`DELETE` on `wms_inventory`, `omnichannel_orders`, or `vendor_otif_contracts`) or blocking someone from hardcoding `margin_floor_pct = 0.0` / `DISABLE_MARGIN_FLOOR`—requires **deterministic enforcement** that executes outside the LLM's probabilistic output, alongside **Google Cloud / Gemini Enterprise governance** and **Antigravity Client Sandbox & Permission controls**.
 
 ---
 
 ## 2. Learning Objectives
 
 In this lab, you will:
-1. Complete the **Retail Pulse FastMCP Server** (`mcp_server/retail_mcp.py`) by implementing two high-impact MCP tools:
-   - `simulate_promo_margin_guard`: Simulates stacking a promotional campaign against a SKU or category and reports whether any SKU breaches its minimum margin floor.
-   - `list_at_risk_vip_orders`: Queries `omnichannel_orders` for `AT_RISK_STOCKOUT` orders filtered by loyalty tier (`DIAMOND`, `GOLD`) and ranks them by Customer Lifetime Value (`customer_ltv_usd`).
-2. Register the local MCP server in `.agents/mcp_config.json` so Antigravity discovers and invokes all 4 retail MCP tools automatically.
-3. Configure a deterministic `PreToolUse` lifecycle hook in `.agents/hooks.json` backed by `scripts/margin_guard_hook.py` that intercepts any `write_file` / `edit_file` tool call violating the 15% margin floor and writes an immutable local audit trail to `data/logs/hook_compliance_audit.jsonl`.
+1. Complete the **Retail Pulse FastMCP Server** (`mcp_server/retail_mcp.py`) by implementing three high-impact MCP tools alongside the starter `query_true_atp_inventory` tool:
+   - `audit_vendor_otif_contracts(only_breaching: bool = True)`: Audits supplier On-Time In-Full (OTIF) contracts and calculates deterministic chargeback penalties (`$98,250.00` across 6 breaching suppliers).
+   - `simulate_promo_margin_guard(sku: str, qty: int = 1, promo_codes_csv: str = "")`: Simulates stacking promotional codes against a SKU and reports whether the stacked discounts trigger the 15% gross margin floor clamp (`margin_floor_clamped`).
+   - `list_at_risk_vip_orders(loyalty_tier: str = "DIAMOND")`: Queries `omnichannel_orders` + `wms_inventory` + `sku_catalog` and evaluates `evaluate_location_atp(..., required_qty=row["qty"])["oversell_risk"]` to list VIP orders at risk of stockout and their total Customer Lifetime Value (`total_vip_ltv_at_risk_usd`).
+2. Register the local MCP server in `.agents/mcp_config.json` so Antigravity discovers and invokes all 4 retail MCP tools automatically (`"command": "./.venv/bin/python", "args": ["mcp_server/retail_mcp.py"]`).
+3. Configure deterministic `PreToolUse` and `PostToolUse` lifecycle hooks in `.agents/hooks.json` backed by `scripts/margin_guard_hook.py` (`--phase pre` and `--phase post`) that intercept destructive SQL or margin-floor bypasses (`exit code 2` with `{"decision": "deny", ...}`) and write an immutable local audit trail to `data/logs/hook_compliance_audit.jsonl`.
 4. Walk through **Google Cloud & Gemini Enterprise Governance** and **Antigravity Client & Workspace Security Controls** for enterprise retail deployments.
 
 ---
@@ -41,7 +42,7 @@ Run the Lab 03 installer to ensure Labs 01 and 02 solutions are active and load 
 ./labs/lab-03-mcp-and-hooks/install.sh
 ```
 
-Verify that the Lab 03 test suite currently fails on the unimplemented MCP tools and missing `.agents/mcp_config.json` / `.agents/hooks.json` files:
+Verify that the Lab 03 test suite currently fails on the unimplemented MCP tools (`TODO_LAB_03` stubs) and missing `.agents/mcp_config.json` / `.agents/hooks.json` entries:
 
 ```bash
 ./labs/lab-03-mcp-and-hooks/verify.sh
@@ -51,37 +52,38 @@ Verify that the Lab 03 test suite currently fails on the unimplemented MCP tools
 
 ### Step 2: Inspect the Starter MCP Server (`mcp_server/retail_mcp.py`)
 
-Open `mcp_server/retail_mcp.py`. Notice that two MCP tools are already implemented:
-- `query_true_atp_inventory(sku: str = "", category: str = "") -> str`
-- `audit_vendor_otif_contracts(only_breaching: bool = True) -> str`
+Open `mcp_server/retail_mcp.py`. Notice that one MCP tool is already implemented:
+- `query_true_atp_inventory(sku: str, location_id: str | None = None, required_qty: int = 1) -> str`
 
-However, two tools are currently stubs returning `{"status": "NOT_IMPLEMENTED"}`:
-- `simulate_promo_margin_guard(promo_code: str, category: str = "", loyalty_tier: str = "SILVER") -> str`
-- `list_at_risk_vip_orders(loyalty_tier: str = "DIAMOND", limit: int = 20) -> str`
+However, three tools are currently `TODO_LAB_03` stubs:
+- `audit_vendor_otif_contracts(only_breaching: bool = True) -> str`
+- `simulate_promo_margin_guard(sku: str, qty: int = 1, promo_codes_csv: str = "") -> str`
+- `list_at_risk_vip_orders(loyalty_tier: str = "DIAMOND") -> str`
 
 ---
 
 ### Step 3: Implement the Remaining MCP Tools & Register `.agents/mcp_config.json`
 
 Open `labs/lab-03-mcp-and-hooks/PROMPTS.md` and use the **Implementation Prompts** (or **Inline Edit `Cmd+I` / `Ctrl+I`**) to:
-1. Implement `simulate_promo_margin_guard` in `mcp_server/retail_mcp.py` so it evaluates all SKUs in the requested category against the requested `promo_code` and `loyalty_tier` using `evaluate_sku_promo()`, returning `total_skus_evaluated`, `floor_violations_count`, `requires_vp_merchandising_override`, and per-SKU details (`sku`, `product_name`, `unit_cost_usd`, `msrp_usd`, `effective_price_usd`, `margin_pct`, `minimum_margin_pct`, `floor_clamped`).
-2. Implement `list_at_risk_vip_orders` in `mcp_server/retail_mcp.py` so it queries `omnichannel_orders` where `status = 'AT_RISK_STOCKOUT'` and `customer_loyalty_tier = loyalty_tier` (or all tiers if `loyalty_tier == "ALL"`), ordered by `customer_ltv_usd DESC`, returning `count`, `total_ltv_exposed_usd`, and `orders`.
-3. Create `.agents/mcp_config.json` registering the `retail-pulse-mcp` server via `.venv/bin/python -m mcp_server.retail_mcp`.
+1. Implement `audit_vendor_otif_contracts(only_breaching: bool = True) -> str` in `mcp_server/retail_mcp.py` by delegating to `audit_all_vendor_otif_contracts(only_breaching=only_breaching)`.
+2. Implement `simulate_promo_margin_guard(sku: str, qty: int = 1, promo_codes_csv: str = "") -> str` in `mcp_server/retail_mcp.py` by splitting `promo_codes_csv` into a list of uppercase promo codes and calling `calculate_promotional_order_pricing(sku=sku, qty=qty, promo_codes=codes)`.
+3. Implement `list_at_risk_vip_orders(loyalty_tier: str = "DIAMOND") -> str` in `mcp_server/retail_mcp.py` by joining `omnichannel_orders`, `wms_inventory`, and `sku_catalog`, evaluating `evaluate_location_atp(..., required_qty=int(row["qty"]))`, filtering to orders where `atp_eval["oversell_risk"]` is `True` (or `status == "AT_RISK_STOCKOUT"`), and returning `loyalty_tier_filter`, `at_risk_order_count`, `total_vip_ltv_at_risk_usd`, and `orders`.
+4. Update `.agents/mcp_config.json` to register the `retail-pulse-mcp` server via `"command": "./.venv/bin/python", "args": ["mcp_server/retail_mcp.py"]`.
 
 ---
 
-### Step 4: Configure the Deterministic `PreToolUse` Margin Guard Hook (`.agents/hooks.json`)
+### Step 4: Configure the Deterministic `PreToolUse` & `PostToolUse` Margin Guard Hooks (`.agents/hooks.json`)
 
-Inspect `scripts/margin_guard_hook.py`. This script reads the tool call payload from `stdin` before any file modification occurs:
-- If a tool call attempts to set `enforce_floor=False` or `enforce_floor = False` inside `src/services/promo_pricing.py`, or sets `"minimum_margin_pct"` below `0.15`, the hook exits with code `2` (`BLOCKED`) and outputs a clear compliance error message to `stderr`.
-- Every hook evaluation (`ALLOW` or `BLOCK`) is appended as a structured JSON event to `data/logs/hook_compliance_audit.jsonl`.
+Inspect `scripts/margin_guard_hook.py`. This script reads the tool call payload from `stdin`:
+- During `--phase pre` (`PreToolUse`), if a command or file edit attempts destructive SQL (`DROP TABLE`, `TRUNCATE`, or `DELETE FROM wms_inventory|omnichannel_orders|vendor_otif_contracts`) or attempts to bypass the 15% margin floor (`margin_floor_pct = 0.0` or `DISABLE_MARGIN_FLOOR`), the hook exits with code `2` and outputs `{"decision": "deny", "reason": "..."}`.
+- Every hook evaluation (`allow` or `deny`) is appended as a structured JSON event to `data/logs/hook_compliance_audit.jsonl`.
 
-Create `.agents/hooks.json` to wire `scripts/margin_guard_hook.py` to the `PreToolUse` lifecycle event for `write_file`, `edit_file`, and `replace_file_content`.
+Configure `.agents/hooks.json` to wire `./.venv/bin/python scripts/margin_guard_hook.py --phase pre` to `PreToolUse` (`run_command|execute_command|bash|write_file|edit_file`) and `./.venv/bin/python scripts/margin_guard_hook.py --phase post` to `PostToolUse`.
 
 Test the hook directly from the terminal to verify both the block behavior and the audit log entry:
 
 ```bash
-echo '{"tool_name":"edit_file","tool_input":{"Path":"src/services/promo_pricing.py","Replacement":"enforce_floor=False"}}' | .venv/bin/python scripts/margin_guard_hook.py
+echo '{"tool_name":"edit_file","tool_input":{"path":"src/services/promo_pricing.py","content":"margin_floor_pct = 0.0 # DISABLE_MARGIN_FLOOR"}}' | ./.venv/bin/python scripts/margin_guard_hook.py --phase pre
 cat data/logs/hook_compliance_audit.jsonl
 ```
 
@@ -129,7 +131,7 @@ When deploying Antigravity across a retail enterprise (merchandising, supply cha
 | **Terminal Sandbox & Network Policy** | OS-level sandbox (`sandbox-exec` on macOS / namespaces on Linux) + Internet Access Toggle | Enable Terminal Sandbox and restrict external network calls so agents can only reach approved internal endpoints. |
 | **Non-Workspace File Access** | Block or require confirmation for file reads/writes outside the workspace root | **Block** non-workspace access so agents cannot read `~/.ssh`, `~/.aws`, or unrelated directories on the host machine. |
 | **Command Allowlist / Denylist** | Prefix allowlist (e.g., `pytest`, `.venv/bin/python`) and denylist (`rm -rf`, `curl`, `nc`) | Allowlist `.venv/bin/python -m pytest` for autonomous TDD while blocking destructive shell or network exfiltration commands. |
-| **Browser Allowlist** | Domain allowlist for the `/browser` subagent | Restrict `/browser` strictly to `http://127.0.0.1:8000` and approved internal staging dashboards. |
+| **Browser Allowlist** | Domain allowlist for the `/browser` subagent | Restrict `/browser` strictly to `http://localhost:8002` (`http://127.0.0.1:8002`) and approved internal staging dashboards. |
 | **Deterministic Lifecycle Hooks** | `.agents/hooks.json` (`PreToolUse`, `PostToolUse`) | Enforce commercial and security invariants (such as `scripts/margin_guard_hook.py`) and log every check to `data/logs/hook_compliance_audit.jsonl`. |
 
 ---
@@ -143,11 +145,9 @@ Run the Lab 03 verification script to confirm your MCP tools, `.agents/mcp_confi
 ```
 
 Expected output:
-- `tests/test_lab03_mcp_hooks.py` passes **5/5 tests**:
-  - `test_mcp_query_true_atp_inventory`
-  - `test_mcp_audit_vendor_otif_contracts`
-  - `test_mcp_simulate_promo_margin_guard`
-  - `test_mcp_list_at_risk_vip_orders`
-  - `test_mcp_config_and_margin_guard_hook`
+- `tests/test_lab03_mcp_hooks.py` passes **3/3 Lab 03 tests** (**13/13 cumulative tests** across Labs 01–03):
+  - `test_mcp_config_and_hooks_json_are_valid`
+  - `test_retail_mcp_tools_return_accurate_live_sqlite_data`
+  - `test_margin_guard_hook_blocks_unsafe_mutations_and_allows_safe_commands`
 
 > Need to jump straight to the verified state? Run `./labs/lab-03-mcp-and-hooks/apply_solution.sh`.

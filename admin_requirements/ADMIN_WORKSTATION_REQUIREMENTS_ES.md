@@ -33,10 +33,10 @@ Para garantizar una experiencia fluida en los 4 laboratorios prácticos de `anti
 ### 2.2 Puertos TCP Locales (Loopback `127.0.0.1` Sin Privilegios)
 Durante los laboratorios, los asistentes inician el servidor local FastAPI y la interfaz de desarrollo de Google ADK vinculados exclusivamente a `127.0.0.1` (localhost). No se exponen puertos hacia la red externa:
 - **Puerto TCP `8002` (`127.0.0.1:8002`)**: Command Center Web en vivo de Retail Pulse (`uvicorn src.main:app --port 8002`).
-- **Puerto TCP `8080` (`127.0.0.1:8080`)**: Interfaz Web de Desarrollo de Google ADK (`adk web adk_agents/retail_pulse --port 8080` vía `./scripts/run_adk_web.sh`).
+- **Puerto TCP `8080` (`127.0.0.1:8080`)**: Interfaz Web de Desarrollo de Google ADK (`adk web adk_agents --port 8080` para `adk_agents/retail_pulse` vía `./scripts/run_adk_web.sh`).
 
 ### 2.3 Reglas de Antivirus / EDR y Firewall de Salida
-1. **Ejecución de Subprocesos Locales (`stdio`)**: En el Laboratorio 3, Google Antigravity invoca el intérprete local de Python (`./.venv/bin/python`) como subproceso vía entrada/salida estándar (`stdio`) para ejecutar el servidor FastMCP (`mcp_server/retail_mcp.py`) y los hooks deterministas de seguridad (`scripts/audit_hook.py`). Verifique que CrowdStrike Falcon, Microsoft Defender o SentinelOne **no bloqueen la ejecución de subprocesos Python sin privilegios** dentro de `antigravity-workshop-retail/`.
+1. **Ejecución de Subprocesos Locales (`stdio`)**: En el Laboratorio 3, Google Antigravity invoca el intérprete local de Python (`./.venv/bin/python`) como subproceso vía entrada/salida estándar (`stdio`) para ejecutar el servidor FastMCP (`mcp_server/retail_mcp.py`) y los hooks deterministas de seguridad (`scripts/margin_guard_hook.py`). Verifique que CrowdStrike Falcon, Microsoft Defender o SentinelOne **no bloqueen la ejecución de subprocesos Python sin privilegios** dentro de `antigravity-workshop-retail/`.
 2. **Dominios HTTPS de Salida Permitidos (Puerto `443`)**:
    - `*.googleapis.com` (`cloudaicompanion.googleapis.com`, `aiplatform.googleapis.com`, `discoveryengine.googleapis.com`, `run.googleapis.com`)
    - `accounts.google.com` y `oauth2.googleapis.com` (Autenticación SSO con Google Cloud / Gemini Enterprise)
@@ -125,7 +125,7 @@ Cuando la carpeta `./wheelhouse` está presente, tanto `./admin_provision_workst
 
 ¿Por qué es indispensable? Durante los laboratorios prácticos, el asistente (sin permisos de administrador) ejecuta scripts que crean y modifican archivos locales dentro de `antigravity-workshop-retail/`:
 - `data/retail_pulse.db` (La base de datos SQLite y sus archivos temporales WAL requieren permisos de escritura en `data/`)
-- `data/exports/` y `data/logs/hook_audit.log` (Reportes generados en el Lab 2 y bitácora de auditoría en el Lab 3)
+- `data/exports/` y `data/logs/hook_compliance_audit.jsonl` (Reportes generados en el Lab 2 y bitácora de auditoría en el Lab 3)
 - `GEMINI.md` y `.agents/` (`rules/`, `skills/`, `mcp_config.json`, `hooks.json` creados en los Labs 2 y 3)
 - `src/services/`, `src/agents/` y `mcp_server/retail_mcp.py` (Archivos editados en los Labs 1, 3 y 4, y restaurados por `./labs/lab-01-margin-inventory-triage/install.sh`)
 
@@ -170,7 +170,7 @@ Además de asignar una **licencia activa de Gemini Enterprise / Gemini Code Assi
 | :--- | :--- | :--- | :--- |
 | `roles/cloudaicompanion.user` | **Gemini for Google Cloud User** | `cloudaicompanion.companions.generateChat`, `cloudaicompanion.companions.generateCode`, `cloudaicompanion.instances.completeCode`, `cloudaicompanion.instances.generateChat`, `cloudaicompanion.instances.generateCode`, `cloudaicompanion.instances.queryEffectiveSetting`, `cloudaicompanion.entitlements.get` | **Obligatorio para Google Antigravity**: Autoriza al desarrollador a iniciar sesión en `agy`, Antigravity IDE y Antigravity 2.0 con Gemini Enterprise y ejecutar inferencia agéntica |
 | `roles/serviceusage.serviceUsageConsumer` | **Service Usage Consumer** | `serviceusage.services.use`, `serviceusage.services.get`, `serviceusage.services.list` | **Obligatorio para Cuota de API**: Permite que la sesión del asistente (`gcloud auth application-default set-quota-project`) utilice la cuota del proyecto de GCP del taller |
-| `roles/aiplatform.user` | **Vertex AI User** | `aiplatform.endpoints.predict`, `aiplatform.endpoints.generateContent`, `aiplatform.endpoints.streamGenerateContent`, `aiplatform.models.get` | **Obligatorio para ADK en el Lab 4**: Permite a `adk web adk_agents/retail_pulse` y al `Runner` de ADK invocar modelos Gemini en Vertex AI (`GOOGLE_GENAI_USE_VERTEXAI=TRUE`) |
+| `roles/aiplatform.user` | **Vertex AI User** | `aiplatform.endpoints.predict`, `aiplatform.endpoints.generateContent`, `aiplatform.endpoints.streamGenerateContent`, `aiplatform.models.get` | **Obligatorio para ADK en el Lab 4**: Permite a `adk web adk_agents` (`adk_agents/retail_pulse`) y al `Runner` de ADK invocar modelos Gemini en Vertex AI (`GOOGLE_GENAI_USE_VERTEXAI=TRUE`) |
 | `roles/discoveryengine.editor` *(o `roles/discoveryengine.viewer`)* | **Discovery Engine Editor / Viewer** | `discoveryengine.engines.get`, `discoveryengine.engines.list`, `discoveryengine.assistants.get`, `discoveryengine.agents.create`, `discoveryengine.agents.update` | **Requerido en el Lab 4 (Gemini Enterprise)**: Permite inspeccionar motores de Gemini Enterprise y registrar el `AgentCard` A2A de `retail-pulse` (`/.well-known/agent.json`) |
 | `roles/viewer` | **Project Viewer** | `resourcemanager.projects.get`, `run.services.get`, `run.services.list` | **Recomendado**: Permite consultar la URL del servicio Cloud Run `retail-pulse` y la configuración del proyecto |
 

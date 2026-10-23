@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Retail Pulse Executive Margin, True ATP & Supplier OTIF Audit Report
 
 ## 1. Promotional Margin Floor Protection (`MARGIN_HOLD` Audit)

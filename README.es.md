@@ -19,7 +19,7 @@ Durante eventos estacionales pico (Flash Sales / Black Friday), las empresas ret
 
 Este repositorio soporta **tanto a Ingenieros Técnicos como a Líderes Comerciales/Operaciones** trabajando en equipo:
 - **Track Técnico (Ingenieros de Software, Datos y Plataforma)**: Depuran microservicios Python/FastAPI, escriben pruebas `pytest`, construyen herramientas FastMCP (`mcp_server/retail_mcp.py`), aplican hooks deterministas `PreToolUse` (`scripts/margin_guard_hook.py`), orquestan sistemas multi-agente con **Google ADK (Agent Development Kit)** y **A2A (Agent2Agent Protocol)** (`src/agents/adk_a2a_orchestrator.py`), prueban interactivamente con **`adk web`** (`scripts/run_adk_web.sh`), y despliegan en **Google Cloud Run + Gemini Enterprise** usando **Terraform** (`infra/terraform/`).
-- **Track Comercial (Merchandising, Category Management y Supply Chain)**: Auditan exportaciones CSV (`data/exports/`), codifican reglas corporativas de margen y OTIF (`GEMINI.md`, `.agents/rules/retail-standards.md`), crean skills ejecutivos reutilizables (`.agents/skills/`), consultan bases de datos retail en lenguaje natural vía MCP, y validan KPIs en el **Retail Pulse Command Center** (`http://127.0.0.1:8000`) y **ADK Web UI** (`http://127.0.0.1:8080`).
+- **Track Comercial (Merchandising, Category Management y Supply Chain)**: Auditan exportaciones CSV (`data/exports/`), codifican reglas corporativas de margen y OTIF (`GEMINI.md`, `.agents/rules/retail-standards.md`), crean skills ejecutivos reutilizables (`.agents/skills/`), consultan bases de datos retail en lenguaje natural vía MCP, y validan KPIs en el **Retail Pulse Command Center** (`http://127.0.0.1:8002`) y **ADK Web UI** (`http://127.0.0.1:8080`).
 
 ---
 
@@ -89,10 +89,10 @@ Ejecuta el instalador raíz para crear el entorno virtual `.venv`, instalar depe
 ```
 
 ### 2. Iniciar el Retail Pulse Command Center en Vivo
-Inicia el servidor FastAPI y abre `http://127.0.0.1:8000` en tu navegador:
+Inicia el servidor FastAPI y abre `http://127.0.0.1:8002` en tu navegador:
 
 ```bash
-.venv/bin/uvicorn src.main:app --reload --port 8000
+.venv/bin/uvicorn src.main:app --reload --port 8002
 ```
 
 Verás el **Retail Pulse Command Center** (con la insignia **Delivered by Tryolabs**) mostrando los KPIs iniciales de la crisis:
@@ -145,5 +145,5 @@ Las empresas retail requieren defensa en profundidad a través de identidad clou
 - **Política de Ejecución de Herramientas**: Configura `strict`, `request-review`, `proceed-in-sandbox` o `always-proceed` para gobernar cuándo los comandos de terminal o escrituras de archivos requieren aprobación humana.
 - **Sandbox de Terminal y Aislamiento de Red**: Aplica sandboxing a nivel de sistema operativo (`sandbox-exec` en macOS / namespaces en Linux) y restringe el acceso saliente a internet.
 - **Protección contra Acceso Fuera del Workspace**: Impide que los agentes lean o modifiquen archivos fuera del directorio `/antigravity-workshop-retail` (protegiendo `~/.ssh`, `~/.aws` y credenciales locales).
-- **Allowlist / Denylist de Comandos y Navegador**: Autoriza ejecutores de pruebas seguros (`.venv/bin/python -m pytest`), bloquea comandos destructivos (`rm -rf`, `curl`) y restringe `/browser` a `http://127.0.0.1:8000`.
-- **Hooks Deterministas de Ciclo de Vida (`.agents/hooks.json`)**: Ejecuta validación determinista previa a la herramienta (`scripts/margin_guard_hook.py`) antes de cualquier modificación de archivo, bloqueando intentos de desactivar el piso de margen del 15% con código de salida `2` y registrando cada decisión en `data/logs/hook_compliance_audit.jsonl`.
+- **Allowlist / Denylist de Comandos y Navegador**: Autoriza ejecutores de pruebas seguros (`.venv/bin/python -m pytest`), bloquea comandos destructivos (`rm -rf`, `curl`) y restringe `/browser` a `http://127.0.0.1:8002`.
+- **Hooks Deterministas de Ciclo de Vida (`.agents/hooks.json`)**: Ejecuta validación determinista previa a la herramienta (`scripts/margin_guard_hook.py`) antes de cualquier modificación de archivo, bloqueando intentos de desactivar el piso de margen del 15% con `"decision": "deny"` y registrando cada decisión en `data/logs/hook_compliance_audit.jsonl`.
