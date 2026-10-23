@@ -61,11 +61,11 @@
 - Autonomous Test-Driven Verification (`pytest`)
 
 #### Live Demo Steps
-1. Run `./labs/lab-01-margin-inventory-triage/verify.sh` in the terminal to show the 2 failing tests (`test_promo_pricing_enforces_minimum_margin_floor` and `test_true_atp_deducts_bopis_damaged_and_safety_stock`).
+1. Run `./labs/lab-01-margin-inventory-triage/verify.sh` in the terminal to show the failing Lab 01 tests.
 2. Paste **Prompt 1A** (Technical) or **Prompt 1B** (Commercial) from `labs/lab-01-margin-inventory-triage/PROMPTS.md` to diagnose Bug #1A and Bug #1B.
 3. Paste **Prompt 2** (`/plan`) to generate a structured implementation plan artifact.
 4. Highlight `calculate_stacked_promo_price` in `src/services/promo_pricing.py`, press `Cmd+I` / `Ctrl+I`, and apply the 15% margin floor (`unit_cost_usd / (1.0 - minimum_margin_pct)`).
-5. Ask Antigravity to fix `calculate_node_atp` in `src/services/inventory_atp.py` (`max(0, on_hand - reserved_bopis - damaged_hold - safety_stock)`) and run `./labs/lab-01-margin-inventory-triage/verify.sh`.
+5. Ask Antigravity to fix `calculate_node_atp` in `src/services/inventory_atp.py` and run `./labs/lab-01-margin-inventory-triage/verify.sh`.
 6. In the browser (`http://127.0.0.1:8000`), click **"1. Enforce 15% Margin Floor (Lab 01)"** and show that Margin Hold orders drop from `30` to `0` (`$0.00` bleed)!
 
 ---
@@ -75,18 +75,18 @@
 #### Capabilities Demonstrated
 - Workspace Memory (`GEMINI.md`)
 - Domain Rules (`.agents/rules/retail-standards.md`)
-- Reusable Skills with YAML Frontmatter + Helper Scripts (`.agents/skills/retail-otif-margin-auditor/SKILL.md` + `scripts/run_otif_margin_audit.py`)
+- Reusable Skills with YAML Frontmatter + Helper Scripts (`.agents/skills/margin-otif-audit/SKILL.md` + `scripts/run_otif_margin_audit.py`)
 - `/learn` Slash Command
 
 #### Live Demo Steps
 1. Run `./labs/lab-02-rules-and-skills/install.sh` and `./labs/lab-02-rules-and-skills/verify.sh`.
 2. Explain the **Antigravity Customization Hierarchy**:
    - **Always-on workspace memory**: `GEMINI.md`
-   - **Targeted domain guardrails**: `.agents/rules/retail-standards.md` (GS1 Modulo-10 GTIN-14 validation, 15% margin floor, OTIF chargeback tiers: 85%–89.99% -> 3%, 80%–84.99% -> 5%, <80% -> 8%)
-   - **On-demand procedural workflows**: `.agents/skills/retail-otif-margin-auditor/SKILL.md`
+   - **Targeted domain guardrails**: `.agents/rules/retail-standards.md` (GS1 Modulo-10 GTIN-14 validation, 15% margin floor, OTIF chargeback tiers)
+   - **On-demand procedural workflows**: `.agents/skills/margin-otif-audit/SKILL.md`
 3. Run **Prompt 4A** from `labs/lab-02-rules-and-skills/PROMPTS.md` (or use `/learn`) to generate all three files.
 4. Run `./labs/lab-02-rules-and-skills/verify.sh` and then trigger the skill with **Prompt 5B**:
-   - Show the generated executive Markdown table identifying **6 breaching vendors** and **$98,250.00 in recoverable chargebacks** (`VND-APEX-01`: `$31,200`, `VND-LUXE-02`: `$14,250`, `VND-SOLAR-04`: `$24,800`, `VND-VELO-05`: `$7,600`, `VND-KINETIC-07`: `$9,900`, `VND-OMNI-09`: `$10,500`).
+   - Show the generated executive Markdown table identifying **6 breaching vendors** and **$98,250.00 in recoverable chargebacks**.
 
 ---
 
@@ -110,45 +110,49 @@
    ```bash
    cat data/logs/hook_compliance_audit.jsonl
    ```
-5. Run `./labs/lab-03-mcp-and-hooks/verify.sh` to confirm all 5/5 tests pass.
+5. Run `./labs/lab-03-mcp-and-hooks/verify.sh` to confirm all Lab 03 tests pass.
 
 #### Live Demo Steps (Part B — Enterprise Security & Governance Walkthrough)
 Walk the audience through the two enterprise governance layers documented in `labs/lab-03-mcp-and-hooks/README.md`:
-
 1. **Layer 1: Google Cloud & Gemini Enterprise Admin Plane**:
-   - **Identity & Seat Management**: Show how enterprise admins grant `roles/cloudaicompanion.user` in Google Cloud IAM mapped to Cloud Identity / Okta / Entra ID groups (`retail-engineering@`, `retail-merchandising@`).
-   - **Cloud Audit Logging (`cloudaicompanion.googleapis.com`)**: Share this exact Google Cloud Logging filter that enterprise SecOps teams use to audit Gemini Enterprise activity in BigQuery / Chronicle SIEM:
-     ```text
-     protoPayload.serviceName="cloudaicompanion.googleapis.com"
-     AND logName=("projects/YOUR_GCP_PROJECT/logs/cloudaudit.googleapis.com%2Factivity"
-       OR "projects/YOUR_GCP_PROJECT/logs/cloudaudit.googleapis.com%2Fdata_access")
-     ```
-   - **Zero Data Retention & No Foundation Model Training**: Emphasize that wholesale costs, vendor SLA contracts, and proprietary source code are never retained to train Google models.
-   - **VPC Service Controls (VPC-SC) & Regional Endpoints**: Explain how `cloudaicompanion.googleapis.com` operates inside a VPC-SC perimeter alongside BigQuery and Cloud SQL.
-
+   - **Identity & Seat Management**: `roles/cloudaicompanion.user` in Google Cloud IAM mapped to Cloud Identity / Okta / Entra ID groups.
+   - **Cloud Audit Logging (`cloudaicompanion.googleapis.com`)**: Admin Activity & Data Access logs routed to BigQuery / Chronicle SIEM.
+   - **Zero Data Retention & No Foundation Model Training**.
+   - **VPC Service Controls (VPC-SC) & Regional Endpoints**.
 2. **Layer 2: Antigravity Client & Workspace Security Controls**:
-   - Open the Antigravity Settings panel and demonstrate:
-     - **Tool Execution Policy**: `strict`, `request-review`, `proceed-in-sandbox`, `always-proceed`.
-     - **Terminal Sandbox & Network Isolation**: OS-level sandboxing and outbound network toggle.
-     - **Non-Workspace File Access**: Blocking reads/writes outside `/antigravity-workshop-retail`.
-     - **Command Allowlist / Denylist & Browser Allowlist**: Allowlisting `.venv/bin/python -m pytest` and restricting `/browser` to `http://127.0.0.1:8000`.
-     - **Deterministic Hooks (`.agents/hooks.json`)**: Pre-execution policy enforcement writing to `data/logs/hook_compliance_audit.jsonl`.
+   - Tool Execution Policy (`strict`, `request-review`, `proceed-in-sandbox`, `always-proceed`), Terminal Sandbox, Non-Workspace File Access Protection, Command/Browser Allowlists, and Deterministic Lifecycle Hooks.
 
 ---
 
-### Module 4: Lab 04 — Multi-Agent Capstone: Smart Split-Shipment Routing (`02:55 - 03:45`)
+### Module 4: Lab 04 — Multi-Agent Capstone: Google ADK, A2A Protocol, `adk web` & Cloud Run / Gemini Enterprise (`02:55 - 03:45`)
 
 #### Capabilities Demonstrated
-- `/plan` & `/boost` for multi-constraint optimization design
-- `/teamwork` & Subagent Orchestration (`invoke_subagent`)
-- `/browser` Live Web UI Verification
+- `/plan`, `/boost`, and `/teamwork` for multi-agent architecture & fulfillment optimization
+- **Google ADK (`google-adk`)** multi-agent hierarchy (`WMSInventoryATPAgent` + `MerchandisingMarginOTIFAgent` + `RetailPulseOrchestratorAgent`)
+- **A2A Protocol (`/.well-known/agent.json` & `POST /api/v1/a2a`)** JSON-RPC 2.0 interoperability
+- **Local ADK Development UI (`adk web`)** via `./scripts/run_adk_web.sh`
+- **Cloud Run + Terraform Deployment & Gemini Enterprise Registration** via `./labs/lab-04-multi-agent-capstone/deploy_gcp.sh`
 
 #### Live Demo Steps
 1. Run `./labs/lab-04-multi-agent-capstone/install.sh` and `./labs/lab-04-multi-agent-capstone/verify.sh`.
-2. Show `src/services/fulfillment_router.py` where `evaluate_candidates` and `optimize_at_risk_orders` raise `NotImplementedError`.
-3. Paste **Prompt 1A (`/plan`)** or **Prompt 2A (`/teamwork`)** from `labs/lab-04-multi-agent-capstone/PROMPTS.md` to implement the routing engine and run the full test suite.
-4. Run `./labs/lab-04-multi-agent-capstone/verify.sh` and celebrate **16/16 passing tests** across Labs 01, 02, 03, and 04!
-5. Return to `http://127.0.0.1:8000` (or invoke **Prompt 4 (`/browser`)**):
+2. Show `src/services/fulfillment_router.py` and `src/agents/adk_a2a_orchestrator.py` where the starter methods raise `NotImplementedError`.
+3. Paste **Prompt 1A (`/plan`)** or **Prompt 2A (`/teamwork`)** from `labs/lab-04-multi-agent-capstone/PROMPTS.md` (or run `./labs/lab-04-multi-agent-capstone/apply_solution.sh`) to implement the routing engine and the ADK + A2A multi-agent orchestrator.
+4. Run `./labs/lab-04-multi-agent-capstone/verify.sh` and celebrate **20/20 passing tests** across Labs 01, 02, 03, and 04!
+5. **Live Demo of `adk web` (Local ADK Development UI)**:
+   ```bash
+   ./scripts/run_adk_web.sh --dry-run
+   # Optionally launch live on port 8080:
+   ./scripts/run_adk_web.sh --port 8080
+   ```
+6. **Live Demo of A2A Discovery Card & JSON-RPC 2.0 Handoff**:
+   ```bash
+   curl -s http://127.0.0.1:8000/.well-known/agent.json | python3 -m json.tool
+   ```
+7. **Live Demo of Cloud Run + Terraform + Gemini Enterprise Deployment**:
+   ```bash
+   ./labs/lab-04-multi-agent-capstone/deploy_gcp.sh --dry-run --project-id retail-pulse-enterprise --region us-central1 --gemini-app-id retail-pulse-ge-app
+   ```
+8. Return to `http://127.0.0.1:8000` (or invoke **Prompt 4B (`/browser`)**):
    - Click **"1. Enforce 15% Margin Floor (Lab 01)"** -> `0` Margin Hold orders (`$0.00` bleed).
    - Click **"2. Optimize Split-Shipment Routing (Lab 04)"** -> All `35` VIP Stockout orders rerouted (`$250,000+` LTV saved, `$14,774.00` post-shipping net margin preserved).
    - Click **"3. Claim OTIF Chargebacks (Lab 02/04)"** -> All `6` breaching vendor contracts marked `CHARGEBACK_CLAIMED` (`$98,250.00` recovered).
@@ -165,3 +169,4 @@ Use this reference table during executive Q&A to explain the deterministic numbe
 | **VIP Stockout Orders (`AT_RISK_STOCKOUT`)** | `35` VIP (`DIAMOND`/`GOLD`) orders (`>$250,000` Customer LTV exposed) | `0` at-risk orders (`35` rerouted to `REROUTED_OPTIMAL` with `$14,774.00` post-shipping net margin) | `tests/test_lab04_capstone.py` |
 | **Vendor OTIF Breaches (`BREACH_DETECTED`)** | `6` breaching contracts (`$98,250.00` unclaimed penalties across `10` vendors) | `6` contracts transitioned to `CHARGEBACK_CLAIMED` (`$98,250.00` recovered) | `tests/test_lab02_rules_skills.py` & `tests/test_lab04_capstone.py` |
 | **PreToolUse Hook Compliance Audit** | Unprotected against `enforce_floor=False` edits | Deterministic exit code `2` block + JSONL audit log in `data/logs/hook_compliance_audit.jsonl` | `tests/test_lab03_mcp_hooks.py` |
+| **Google ADK + A2A Multi-Agent System** | Unconnected technical & commercial workflows | `WMSInventoryATPAgent` -> `MerchandisingMarginOTIFAgent` A2A handoff + Cloud Run Terraform + Gemini Enterprise registration | `tests/test_lab04_capstone.py` (`20/20` tests total) |

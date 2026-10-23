@@ -1,39 +1,39 @@
-# Playbook de Prompts del Laboratorio 04: Enrutamiento Omnicanal Multi-Agente y Centro de Comando Ejecutivo
+# Playbook de Prompts del Lab 04: Google ADK, Protocolo A2A, Enrutamiento Omnicanal y Despliegue en Gemini Enterprise
 
-Copia y pega estos prompts en **Google Antigravity** a medida que completas el Capstone del Laboratorio 04. Cada fase incluye prompts tanto para el **Track Técnico** como para el **Track Comercial / Ejecutivo**.
+Copia y pega estos prompts en **Google Antigravity** mientras completas el Capstone del Lab 04. Cada fase incluye prompts tanto para el **Track Técnico** como para el **Track Comercial / Ejecutivo**.
 
 ---
 
 ## Fase 1: Descubrimiento y Planificación Multi-Agente (`/plan` y `/boost`)
 
-### Prompt 1A — Track Técnico: Plan Arquitectónico Profundo (`/plan`)
+### Prompt 1A — Track Técnico: Plan Arquitectónico para Enrutamiento + ADK + A2A (`/plan`)
 ```text
-/plan Lee @src/services/fulfillment_router.py, @src/services/inventory_atp.py, @src/main.py y @tests/test_lab04_capstone.py.
-Crea un plan de implementación paso a paso para `evaluate_candidates` y `optimize_at_risk_orders` en `src/services/fulfillment_router.py`:
-1. Filtrar los nodos de `wms_inventory` donde `calculate_node_atp(dict(row)) >= qty`.
-2. Calcular `gross_margin_usd = (effective_unit_price_usd - unit_cost_usd) * qty` y `post_shipping_net_margin_usd = round(gross_margin_usd - shipping_cost_usd, 2)`.
-3. Ordenar los candidatos elegibles por `(-post_shipping_net_margin_usd, shipping_cost_usd, 0 if location_type == 'DC' else 1)`.
-4. En `optimize_at_risk_orders(conn, dry_run=False)`, iterar sobre todos los pedidos `AT_RISK_STOCKOUT` ordenados por `customer_ltv_usd DESC, order_id ASC`, re-enrutar cada uno al mejor candidato (`status = 'REROUTED_OPTIMAL'`), descontar `on_hand_qty` en el nodo ganador cuando `not dry_run` y devolver las métricas resumen esperadas por `tests/test_lab04_capstone.py`.
+/plan Lee @src/services/fulfillment_router.py, @src/agents/adk_a2a_orchestrator.py, @adk_agents/retail_pulse/agent.py, @src/main.py y @tests/test_lab04_capstone.py.
+Crea un plan de implementación paso a paso para completar nuestro Capstone del Lab 04:
+1. En `src/services/fulfillment_router.py`, implementar `evaluate_candidates` y `optimize_at_risk_orders` para clasificar los nodos con `true_atp >= qty` por `(-post_shipping_net_margin_usd, shipping_cost_usd, 0 if location_type == 'DC' else 1)` y re-enrutar las 35 órdenes VIP `AT_RISK_STOCKOUT` a `REROUTED_OPTIMAL`.
+2. En `src/agents/adk_a2a_orchestrator.py`, implementar:
+   - `WMSInventoryATPAgent.execute(conn, dry_run)` (auditoría True ATP + enrutamiento óptimo omnicanal + `A2AAgentHandoff` hacia `merchandising_margin_agent`)
+   - `MerchandisingMarginOTIFAgent.execute(conn, wms_handoff, dry_run)` (aplicación del piso de margen bruto del 15% + recuperación de penalidades OTIF de proveedores)
+   - `RetailPulseOrchestratorAgent.run_orchestration(conn, prompt, dry_run, session_id)` y `build_adk_agent_hierarchy()` usando `google.adk.agents.LlmAgent` y `SequentialAgent`
+   - `build_a2a_agent_card(base_url)` y `handle_a2a_jsonrpc(conn, rpc_request, base_url)` para `GET /.well-known/agent.json` y `POST /api/v1/a2a` (`tasks/send` y `message/send`).
 ```
 
-### Prompt 1B — Track Comercial / Operaciones: Análisis de Trade-Offs (`/boost`)
+### Prompt 1B — Track Comercial / Operaciones: Análisis de Gobernanza Multi-Agente (`/boost`)
 ```text
-/boost Lee @src/services/fulfillment_router.py y @tests/test_lab04_capstone.py.
-Desde una perspectiva de rentabilidad omnicanal en retail, analiza por qué clasificar los nodos de cumplimiento por Margen Neto Post-Envío (`gross_margin_usd - shipping_zone_cost_usd`) con un criterio de desempate a favor de los Centros de Distribución regionales (`DC`) sobre el envío desde tienda (`STORE`) protege tanto la economía unitaria como la disponibilidad de inventario en tiendas insignia. Luego implementa el motor de enrutamiento en `src/services/fulfillment_router.py`.
+/boost Lee @src/services/fulfillment_router.py, @src/agents/adk_a2a_orchestrator.py y @tests/test_lab04_capstone.py.
+Desde una perspectiva de rentabilidad omnicanal retail, analiza por qué separar responsabilidades entre un agente técnico `WMSInventoryATPAgent` (True ATP y enrutamiento por margen neto post-envío priorizando Centros de Distribución `DC`) y un agente comercial `MerchandisingMarginOTIFAgent` (piso de margen bruto del 15% y notas de débito OTIF) conectados mediante el Protocolo A2A previene tanto la fuga de margen negativo como las cancelaciones de clientes VIP. Luego implementa ambos módulos para que pasen las 20 pruebas del taller.
 ```
 
 ---
 
 ## Fase 2: Ejecución Multi-Agente (`/teamwork` y Subagentes)
 
-### Prompt 2A — Orquestación de Subagentes en Paralelo (`/teamwork`)
+### Prompt 2A — Orquestación Paralela de Subagentes (`/teamwork`)
 ```text
-/teamwork Coordina dos flujos de trabajo especializados para completar nuestro Capstone del Laboratorio 04:
-1. Ingeniero de Enrutamiento Omnicanal: Implementa `evaluate_candidates` y `optimize_at_risk_orders` en @src/services/fulfillment_router.py para que los 35 pedidos VIP en `AT_RISK_STOCKOUT` sean re-enrutados al nodo con mayor margen neto post-envío y suficiente True ATP.
-2. Auditor de QA y Finanzas Comerciales: Ejecuta `./labs/lab-04-multi-agent-capstone/verify.sh` para validar las 16 pruebas de los Laboratorios 01-04 y genera una tabla ejecutiva de resumen mostrando:
-   - Fuga total de margen eliminada (Laboratorio 01)
-   - LTV total de clientes VIP salvado y Margen Neto Post-Envío preservado en los 35 pedidos VIP re-enrutados (Laboratorio 04)
-   - Chargebacks OTIF de proveedores recuperados en los 6 proveedores en incumplimiento (Laboratorio 02/04)
+/teamwork Coordina tres flujos de trabajo especializados para completar el Capstone del Lab 04:
+1. Ingeniero de Enrutamiento Omnicanal: Implementa `evaluate_candidates` y `optimize_at_risk_orders` en @src/services/fulfillment_router.py para que las 35 órdenes VIP `AT_RISK_STOCKOUT` se re-enruten al nodo con mayor margen neto post-envío y suficiente True ATP.
+2. Arquitecto de Sistemas ADK y A2A: Implementa `WMSInventoryATPAgent`, `MerchandisingMarginOTIFAgent`, `RetailPulseOrchestratorAgent`, `build_a2a_agent_card` y `handle_a2a_jsonrpc` en @src/agents/adk_a2a_orchestrator.py.
+3. Auditor de QA, ADK Web y Cloud Run: Ejecuta `./labs/lab-04-multi-agent-capstone/verify.sh` para validar las 20 pruebas de los Labs 01-04, verifica `./scripts/run_adk_web.sh --dry-run` y `./labs/lab-04-multi-agent-capstone/deploy_gcp.sh --dry-run`, y genera una tabla ejecutiva con la recuperación financiera total.
 ```
 
 ---
@@ -43,27 +43,36 @@ Desde una perspectiva de rentabilidad omnicanal en retail, analiza por qué clas
 Abre `src/services/fulfillment_router.py`, selecciona `evaluate_candidates` y `optimize_at_risk_orders`, presiona `Cmd+I` (macOS) o `Ctrl+I` (Windows/Linux) e ingresa:
 
 ```text
-Implementa `evaluate_candidates` usando `calculate_node_atp` para filtrar nodos con `true_atp >= qty`, calcula `post_shipping_net_margin_usd = round((effective_unit_price_usd - unit_cost_usd) * qty - shipping_cost_usd, 2)` y ordena por `(-post_shipping_net_margin_usd, shipping_cost_usd, 0 if location_type == 'DC' else 1)`. Luego implementa `optimize_at_risk_orders` para re-enrutar pedidos `AT_RISK_STOCKOUT` (ordenados por `customer_ltv_usd DESC, order_id ASC`) hacia `candidates[0]`, actualizando `omnichannel_orders` (`status='REROUTED_OPTIMAL'`) y descontando `wms_inventory.on_hand_qty` cuando `not dry_run`.
+Implement `evaluate_candidates` using `calculate_node_atp` to filter nodes with `true_atp >= qty`, compute `post_shipping_net_margin_usd = round((effective_unit_price_usd - unit_cost_usd) * qty - shipping_cost_usd, 2)`, and sort by `(-post_shipping_net_margin_usd, shipping_cost_usd, 0 if location_type == 'DC' else 1)`. Then implement `optimize_at_risk_orders` to reroute `AT_RISK_STOCKOUT` orders (ordered by `customer_ltv_usd DESC, order_id ASC`) to `candidates[0]`, updating `omnichannel_orders` (`status='REROUTED_OPTIMAL'`) and decrementing `wms_inventory.on_hand_qty` when `not dry_run`.
 ```
 
 ---
 
-## Fase 4: Verificación Visual del Centro de Comando (`/browser`)
+## Fase 4: Pruebas Interactivas Locales con `adk web` y `/browser`
 
-### Prompt 4 — Verificación de Extremo a Extremo en el Navegador del Centro de Comando de Retail Pulse
+### Prompt 4A — Probar la Jerarquía Multi-Agente Localmente en ADK Web UI (`adk web`)
+```text
+Valida nuestra configuración local de Google ADK Development UI ejecutando `./scripts/run_adk_web.sh --dry-run`, e inspecciona @adk_agents/retail_pulse/agent.py para confirmar cómo `root_agent` (`retail_pulse_root_agent`) delega entre `wms_inventory_agent`, `merchandising_margin_agent` y `a2a_bridge_agent`.
+```
+
+### Prompt 4B — Verificación Visual de Punta a Punta en el Navegador (`/browser`)
 ```text
 /browser Inicia el servidor FastAPI (`uvicorn src.main:app --port 8000`) si aún no está corriendo, abre `http://127.0.0.1:8000` y verifica:
-1. El encabezado muestra el logo de Tryolabs ("Delivered by Tryolabs") y los KPIs del Centro de Comando de Retail Pulse.
+1. El encabezado muestra el logo de Tryolabs ("Delivered by Tryolabs") y los KPIs del Retail Pulse Command Center.
 2. Haz clic en "1. Enforce 15% Margin Floor (Lab 01)", "2. Optimize Split-Shipment Routing (Lab 04)" y "3. Claim OTIF Chargebacks (Lab 02/04)".
-3. Confirma que Margin Hold Orders = 0, VIP Stockout Risk = 0 y que los 6 contratos de proveedores en incumplimiento muestran `CHARGEBACK_CLAIMED` sumando $98,250.00.
+3. Confirma que Margin Hold Orders = 0, VIP Stockout Risk = 0, y que los 6 contratos de proveedores en incumplimiento muestran `CHARGEBACK_CLAIMED` sumando $98,250.00.
+4. Consulta también `http://127.0.0.1:8000/.well-known/agent.json` para inspeccionar la Agent Card A2A en vivo.
 ```
 
 ---
 
-## Fase 5: Desafío Adicional — Cumplimiento Dividido entre Múltiples Nodos
+## Fase 5: Despliegue en Cloud Run + Terraform y Registro en Gemini Enterprise
 
-### Prompt 5 — Diseñar Envíos Divididos Multi-Nodo cuando Ningún Nodo Único Tiene la Cantidad Completa
+### Prompt 5 — Validar Infraestructura Terraform y Registro A2A en Gemini Enterprise
 ```text
-¿Qué sucede si un pedido VIP de alto volumen (por ejemplo, 25 unidades) no puede ser surtido por ningún DC o Tienda individualmente, pero sí dividiéndolo entre dos nodos (por ejemplo, 15 unidades desde `DC-EAST-01` + 10 unidades desde `DC-CENTRAL-02`)?
-Propón una función auxiliar compatible `evaluate_split_shipment_pair(conn, sku, qty, effective_unit_price_usd)` que encuentre la combinación de 2 nodos con mayor margen neto cuando `evaluate_candidates` devuelva una lista vacía, asegurando que los costos de envío combinados no incumplan nuestro piso mínimo de margen del 15%.
+Lee @infra/terraform/main.tf, @deploy/deploy_gcp.sh y @deploy/register_gemini_enterprise_agent.sh.
+Ejecuta `./labs/lab-04-multi-agent-capstone/deploy_gcp.sh --dry-run --project-id retail-pulse-prod --region us-central1 --gemini-app-id retail-pulse-ge-app` y explica cada paso del pipeline de despliegue:
+1. Construcción de la imagen de contenedor con Cloud Build y Artifact Registry
+2. Aprovisionamiento de Cloud Run v2, cuenta de servicio IAM de mínimo privilegio y permisos de Vertex AI con Terraform
+3. Registro de la Agent Card A2A de Cloud Run (`/.well-known/agent.json` y `/api/v1/a2a`) en Gemini Enterprise (Discovery Engine).
 ```

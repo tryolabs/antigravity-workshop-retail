@@ -14,11 +14,13 @@ fi
 ./labs/lab-02-rules-and-skills/apply_solution.sh
 ./labs/lab-03-mcp-and-hooks/apply_solution.sh
 
-# Reset Lab 04 fulfillment_router.py to starter stub
+# Reset Lab 04 fulfillment_router.py and adk_a2a_orchestrator.py to starter stubs
+mkdir -p "$ROOT_DIR/src/agents"
 cp "$LAB_DIR/starter/fulfillment_router.py" "$ROOT_DIR/src/services/fulfillment_router.py"
+cp "$LAB_DIR/starter/adk_a2a_orchestrator.py" "$ROOT_DIR/src/agents/adk_a2a_orchestrator.py"
 
 echo "=================================================================="
-echo " [Lab 04 Ready] Multi-Agent Capstone: Omnichannel Routing & Chargebacks"
+echo " [Lab 04 Ready] Multi-Agent Capstone: ADK, A2A & Omnichannel Routing"
 echo " -> Prerequisite Lab 01, Lab 02 & Lab 03 solutions automatically applied."
 echo " -> Guide (EN): labs/lab-04-multi-agent-capstone/README.md"
 echo " -> Guide (ES): labs/lab-04-multi-agent-capstone/README.es.md"

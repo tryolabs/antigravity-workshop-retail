@@ -1,0 +1,10 @@
+project_id                 = "your-gcp-project-id"
+region                     = "us-central1"
+service_name               = "retail-pulse-omnichannel"
+artifact_repo_name         = "retail-pulse-repo"
+image_tag                  = "v1.0.0"
+gemini_enterprise_app_id   = "retail-pulse-gemini-enterprise-app"
+gemini_enterprise_location = "global"
+min_instances              = 0
+max_instances              = 5
+allow_unauthenticated      = false

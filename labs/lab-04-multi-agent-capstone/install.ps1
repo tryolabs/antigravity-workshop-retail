@@ -12,5 +12,6 @@ Copy-Item "$RootDir\labs\lab-03-mcp-and-hooks\solution\retail_mcp.py" "$RootDir\
 Copy-Item "$RootDir\labs\lab-03-mcp-and-hooks\solution\mcp_config.json" "$RootDir\.agents\mcp_config.json" -Force
 Copy-Item "$RootDir\labs\lab-03-mcp-and-hooks\solution\hooks.json" "$RootDir\.agents\hooks.json" -Force
 Copy-Item "$LabDir\starter\fulfillment_router.py" "$RootDir\src\services\fulfillment_router.py" -Force
+Copy-Item "$LabDir\starter\adk_a2a_orchestrator.py" "$RootDir\src\agents\adk_a2a_orchestrator.py" -Force
 
 Write-Host "[Lab 04 Ready] Prerequisite Lab 01, 02 & 03 solutions applied; Lab 04 initialized."

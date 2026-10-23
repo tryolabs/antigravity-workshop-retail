@@ -1,5 +1,6 @@
 """
-FastAPI REST API & Live Omnichannel Command Center Dashboard for Retail Pulse (Lab 4 Solution).
+FastAPI REST API, A2A Protocol Server & Live Omnichannel Command Center Dashboard
+for Retail Pulse (Lab 4 Solution).
 """
 
 from __future__ import annotations
@@ -7,11 +8,15 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import Body, FastAPI, HTTPException, Query
 from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+from src.agents.adk_a2a_orchestrator import (
+    get_a2a_agent_card,
+    handle_a2a_jsonrpc,
+)
 from src.database import fetch_all
 from src.models import PromoEvaluationRequest
 from src.services.fulfillment_router import (
@@ -36,7 +41,8 @@ app = FastAPI(
     version="1.0.0",
     description=(
         "Google Antigravity Retail Industry Workshop API combining POS/WMS/RFID/EDI "
-        "technical telemetry with Commercial Margin Floors, VIP LTV, and Vendor OTIF Contracts."
+        "technical telemetry with Commercial Margin Floors, VIP LTV, Vendor OTIF Contracts, "
+        "Google ADK Multi-Agent Orchestration, and the A2A (Agent2Agent) Protocol."
     ),
 )
 
@@ -75,6 +81,42 @@ def serve_dashboard() -> Any:
 @app.get("/api/v1/health")
 def health_check() -> dict[str, str]:
     return {"status": "ok", "service": "retail-pulse-omnichannel-api"}
+
+
+# ============================================================================
+# A2A (Agent2Agent) Protocol Discovery & JSON-RPC 2.0 Endpoints (Lab 4)
+# ============================================================================
+
+
+@app.get("/.well-known/agent.json")
+@app.get("/api/v1/a2a/agent-card")
+def api_a2a_agent_card() -> dict[str, Any]:
+    """Serve the A2A Protocol Agent Discovery Card."""
+    card = get_a2a_agent_card()
+    if card.get("status") == "NOT_IMPLEMENTED_STUB":
+        raise HTTPException(
+            status_code=501,
+            detail="A2A Agent Discovery Card is not implemented yet (Complete Lab 4 ADK & A2A Capstone).",
+        )
+    return card
+
+
+@app.post("/api/v1/a2a")
+@app.post("/api/v1/a2a/tasks/send")
+def api_a2a_jsonrpc(payload: dict[str, Any] = Body(...)) -> dict[str, Any]:
+    """Handle A2A JSON-RPC 2.0 `tasks/send` and `message/send` multi-agent tasks."""
+    response = handle_a2a_jsonrpc(payload)
+    if response.get("status") == "NOT_IMPLEMENTED_STUB":
+        raise HTTPException(
+            status_code=501,
+            detail="A2A JSON-RPC 2.0 task handler is not implemented yet (Complete Lab 4 ADK & A2A Capstone).",
+        )
+    return response
+
+
+# ============================================================================
+# Retail Pulse Domain REST API Endpoints
+# ============================================================================
 
 
 @app.post("/api/v1/pricing/evaluate")
