@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Laboratorio 03: Servidor MCP de Retail, Hooks Deterministas de Margen y Gobernanza de Seguridad Empresarial
 
 **Duración**: 45 Minutos | **Perfil**: Track Técnico y Comercial | **Prerrequisitos**: Laboratorio 02 Completado

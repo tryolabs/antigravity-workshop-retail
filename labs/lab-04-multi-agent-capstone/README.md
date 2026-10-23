@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Lab 04: Multi-Agent Capstone — Google ADK, A2A Protocol, Omnichannel Routing & Gemini Enterprise Deployment
 
 **Duration**: 45 Minutes | **Persona**: Technical & Commercial Track | **Prerequisites**: Labs 01, 02 & 03 Completed

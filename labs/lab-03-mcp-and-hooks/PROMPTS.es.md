@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Playbook de Prompts del Laboratorio 03: Servidor MCP de Retail y Hooks Deterministas de Margen
 
 Copia y pega estos prompts en **Google Antigravity** a medida que avanzas en el Laboratorio 03. Cada sección incluye prompts diseñados tanto para el **Track Técnico** como para el **Track Comercial / Merchandising**.

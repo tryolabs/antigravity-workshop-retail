@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Lab 01 — Optimized Antigravity Prompts Playbook (English)
 
 Use these copy-pasteable prompts inside **Google Antigravity** (Sidebar Chat, `/plan`, Inline `Cmd+I`, or CLI `agy`) to complete Lab 01.

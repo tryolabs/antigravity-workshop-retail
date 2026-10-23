@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Lab 03: Retail MCP Server, Deterministic Margin Hooks & Enterprise Security Governance
 
 **Duration**: 45 Minutes | **Persona**: Technical & Commercial Track | **Prerequisites**: Lab 02 Completed

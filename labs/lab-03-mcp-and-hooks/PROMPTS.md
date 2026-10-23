@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Lab 03 Prompt Playbook: Retail MCP Server & Deterministic Margin Hooks
 
 Copy and paste these prompts into **Google Antigravity** as you progress through Lab 03. Each section includes prompts tailored for both the **Technical Track** and the **Commercial / Merchandising Track**.

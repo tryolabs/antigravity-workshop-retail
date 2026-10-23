@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Laboratorio 02 — Guía de Prompts Optimizados de Antigravity (Español)
 
 Utiliza estos prompts listos para copiar y pegar dentro de **Google Antigravity** para completar el Laboratorio 02.

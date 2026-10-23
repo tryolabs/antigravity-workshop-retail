@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Laboratorio 01 — Guía de Prompts Optimizados de Antigravity (Español)
 
 Utiliza estos prompts listos para copiar y pegar dentro de **Google Antigravity** (Chat Lateral, `/plan`, edición en línea `Cmd+I` o CLI `agy`) para resolver el Laboratorio 01.

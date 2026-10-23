@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Lab 02 — Optimized Antigravity Prompts Playbook (English)
 
 Use these copy-pasteable prompts inside **Google Antigravity** to complete Lab 02.

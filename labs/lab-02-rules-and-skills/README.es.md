@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Laboratorio 02: Reglas del Espacio de Trabajo (`GEMINI.md`) y Habilidades de Divulgación Progresiva (`SKILL.md`)
 
 **Impartido por Tryolabs • Potenciado por Google Antigravity y Gemini Enterprise**

@@ -40,9 +40,9 @@ color: #f0f6fc
 - Hour 4 (02:59–04:00): [6m Theory] Subagents, ADK, A2A & Terraform → [55m Lab 4] Multi-Agent Capstone, ADK Dev UI & Cloud Deploy
 - Self-Healing Checkpoints: Running ./labs/lab-0X/install.sh automatically applies prior lab solutions!
 
-> **Every lab includes README.md, PROMPTS.md (optimized Antigravity prompts), install.sh, and verify.sh.**
+> **Every lab includes LAB_0X_INSTRUCTIONS_EN.pdf, README.md, PROMPTS.md, install.sh, and verify.sh.**
 
-<!-- Speaker Notes: Walk through the 4-hour progression. Emphasize that attendees use Antigravity itself to solve every lab using the curated prompts in PROMPTS.md. -->
+<!-- Speaker Notes: Walk through the 4-hour progression. Emphasize that attendees use Antigravity itself to solve every lab using the curated prompts in PROMPTS.md and the printable PDF guides. -->
 
 ---
 
@@ -87,22 +87,46 @@ color: #f0f6fc
 ---
 
 ![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
-##### HANDS-ON LAB 1 (52 MINUTES) • TRIAGE & RECOVERY
-# Lab 1: Root-Cause Triage & Revenue/Margin Leakage Recovery
-**Use Antigravity (/plan, @mentions, Cmd+I, pytest) to diagnose and fix two high-impact bugs**
+##### HANDS-ON LAB 1 (PART 1/2) • OBJECTIVES & WHAT YOU WILL BUILD
+# Lab 1: Promo Margin Floor & True ATP Triage — Objectives & Build Spec
+**52 Minutes • Printable PDF Guide: labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_EN.pdf**
 
 ![Architecture Diagram](../assets/retail_domain_en.png)
 
-### Lab 1 Walkthrough & Optimized Prompts
-- Setup: Run ./labs/lab-01-margin-inventory-triage/install.sh & open http://localhost:8002
-- Bug #1 (Commercial Margin Bleed): src/services/promo_pricing.py stacks non-stackable promos and fails to clamp net price to the 15% margin floor (-$35,113.25 bleed)
-- Bug #2 (Technical ATP Oversell): src/services/inventory_atp.py ignores reserved_bopis_qty, damaged_hold_qty & safety_stock_qty (35 VIP orders at risk)
-- Prompt 1 (/plan): '/plan Inspect @src/services/promo_pricing.py, @src/services/inventory_atp.py and @tests/test_lab01_triage.py to diagnose the margin and ATP bugs'
-- Prompt 2 (Cmd+I & Fix): Use Inline Cmd+I to fix Decimal math, then run ./labs/lab-01-margin-inventory-triage/verify.sh
+### Lab 1 Objectives & What You Will Build
+- Objective 1 (Multi-File Agentic Triage): Master Antigravity `@mentions`, `/plan`, and inline `Cmd/Ctrl+I` to correlate POS/WMS webhook streams (`pos_wms_webhooks.jsonl`) with pricing and ATP inventory code.
+- Objective 2 (Margin & VIP Stockout Recovery): Stop `$35,113.25` in negative margin bleed across 30 orders and accurately flag 35 `DIAMOND`/`GOLD` VIP orders (`>$250K` LTV) at phantom-stock nodes.
+- What You Will Build #1 (GS1 & Margin-Floor Pricing Engine): Refactor `src/services/promo_pricing.py` to validate GS1 `gtin_14` Modulo-10, use `Decimal(ROUND_HALF_UP)`, compound stackable promos multiplicatively, and clamp net price to the `15%` margin floor.
+- What You Will Build #2 (Real-Time True ATP Engine): Refactor `src/services/inventory_atp.py` to compute `raw_atp = on_hand - reserved - safety_stock - unprocessed_webhook_delta_qty`.
+- Deliverable & Verification: Pass all 5 unit/integration tests in `tests/test_lab01_triage.py` (`./labs/lab-01-margin-inventory-triage/verify.sh`) and inspect `http://localhost:8002`.
 
-> **Open PROMPTS.md inside labs/lab-01-* for copy-pasteable prompts across Discovery, /plan, Cmd+I & Verification.**
+> **Delivered by Tryolabs • Full printable guide: LAB_01_INSTRUCTIONS_EN.pdf**
 
-<!-- Speaker Notes: Launch Lab 1! Have attendees run install.sh, inspect the broken KPIs on the live Web Dashboard, and use the optimized prompts in PROMPTS.md to fix both bugs. -->
+<!-- Speaker Notes: Review the Retail Lab 1 Objectives and What Attendees Will Build before starting Lab 1. -->
+
+---
+
+![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
+##### HANDS-ON LAB 1 (PART 2/2) • STEP-BY-STEP INSTRUCTIONS & PROMPTS
+# Lab 1 Instructions & Copy-Paste Antigravity Prompts
+**Follow Steps 1–5 on the left and copy-paste prompts from labs/lab-01-margin-inventory-triage/PROMPTS.md**
+
+### Step-by-Step Lab 1 Instructions
+- Step 1 (Initialize Lab 01): Run `./labs/lab-01-margin-inventory-triage/install.sh` to seed `data/retail_pulse.db` and starter bugs.
+- Step 2 (Reproduce Failing Tests): Run `./.venv/bin/pytest tests/test_lab01_triage.py` to observe the margin bleed and phantom ATP failures.
+- Step 3 (Fix `src/services/promo_pricing.py`): Validate GS1 `gtin_14` Modulo-10, use `Decimal(ROUND_HALF_UP)`, never stack `EXCLUSIVE` promos, apply stackable promos multiplicatively, and clamp price to `contract_min_margin_floor_pct`.
+- Step 4 (Fix `src/services/inventory_atp.py`): Compute `raw_atp = on_hand - reserved - safety_stock - unprocessed_webhook_delta_qty` and `true_atp = max(0, raw_atp)`.
+- Step 5 (Verify): Run `./labs/lab-01-margin-inventory-triage/verify.sh` (`5 passed`: `$35,113.25` bleed stopped; 35 VIP orders flagged).
+
+### Copy-Paste Prompts (PROMPTS.md) & Verification
+- Prompt 1 — Discovery (@Mentions): '@src/services/promo_pricing.py @src/services/inventory_atp.py @data/logs/pos_wms_webhooks.jsonl @tests/test_lab01_triage.py Run pytest and explain why 30 orders are bleeding margin and 35 VIP orders have phantom ATP.'
+- Prompt 2 — Planning (/plan): '/plan Create a remediation plan for promo_pricing.py (GS1 GTIN-14, Decimal, multiplicative stackable promos, margin floor clamping) and inventory_atp.py (subtract reserved, safety_stock, and webhook delta).'
+- Prompt 3 — Inline Edit (Cmd+I): Highlight `calculate_node_atp` in `inventory_atp.py` -> 'Subtract reserved_qty, safety_stock_qty, and unprocessed_webhook_delta_qty from on_hand_qty.'
+- Prompt 4 — Autonomous Verify: 'Apply fixes to @src/services/promo_pricing.py and @src/services/inventory_atp.py and run ./labs/lab-01-margin-inventory-triage/verify.sh.'
+
+> **Delivered by Tryolabs • Self-Healing Checkpoint: ./labs/lab-01-margin-inventory-triage/apply_solution.sh**
+
+<!-- Speaker Notes: Keep this slide projected during Retail Lab 1 so attendees have both the 5 steps and copy-paste prompts visible. -->
 
 ---
 
@@ -126,22 +150,46 @@ color: #f0f6fc
 ---
 
 ![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
-##### HANDS-ON LAB 2 (54 MINUTES) • DOMAIN BRAIN
-# Lab 2: Encoding Industry Rules & Executive Audit Skills
-**Teach Antigravity your industry standards and build an automated Technical + Commercial Risk Auditor**
+##### HANDS-ON LAB 2 (PART 1/2) • OBJECTIVES & WHAT YOU WILL BUILD
+# Lab 2: Workspace Rules & Progressive Skills — Objectives & Build Spec
+**54 Minutes • Printable PDF Guide: labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_EN.pdf**
 
 ![Architecture Diagram](../assets/customizations_en.png)
 
-### Lab 2 Walkthrough & Optimized Prompts
-- Setup: Run ./labs/lab-02-rules-and-skills/install.sh (auto-applies Lab 1 solution)
-- Task 1 (Workspace Rules): Create GEMINI.md & .agents/rules/retail-standards.md enforcing Decimal(0.01) math, GS1 Modulo-10 GTIN-14 validation & 15% margin floor
-- Task 2 (Progressive Skill): Create .agents/skills/retail-otif-margin-auditor/SKILL.md correlating EDI 856 delays with vendor OTIF penalty tiers
-- Optimized Prompt: 'Create @GEMINI.md, @.agents/rules/retail-standards.md and @.agents/skills/retail-otif-margin-auditor/SKILL.md, then run @scripts/run_otif_margin_audit.py'
-- Verify: Run ./labs/lab-02-rules-and-skills/verify.sh & try /learn to persist a new rule!
+### Lab 2 Objectives & What You Will Build
+- Objective 1 (Hierarchical Domain Rules): Encode permanent GS1 GTIN-14, True ATP, multiplicative promo, and Supplier OTIF invariants into workspace rules.
+- Objective 2 (Progressive Disclosure Skills): Build an on-demand executive merchandising & supply-chain audit skill in `.agents/skills/` using lightweight YAML frontmatter.
+- What You Will Build #1 (`GEMINI.md` & `.agents/rules/retail-standards.md`): Workspace context & rule files enforcing `Decimal(ROUND_HALF_UP)`, GS1 Modulo-10 check digits, `15%` margin floor, and OTIF chargeback formulas.
+- What You Will Build #2 (`.agents/skills/margin-otif-audit/SKILL.md`): Progressive skill (`name: margin-otif-audit`) orchestrating `scripts/run_otif_margin_audit.py`.
+- Deliverable & Verification: Generate `data/exports/executive_margin_otif_audit.json` & `.md` (`$98,250.00` OTIF chargebacks) and pass `./labs/lab-02-rules-and-skills/verify.sh`.
 
-> **Open labs/lab-02-rules-and-skills/PROMPTS.md for step-by-step prompts to generate and verify your Rules & Skill.**
+> **Delivered by Tryolabs • Full printable guide: LAB_02_INSTRUCTIONS_EN.pdf**
 
-<!-- Speaker Notes: Guide attendees through Lab 2. Show how Antigravity automatically respects GEMINI.md and invokes their custom SKILL.md. -->
+<!-- Speaker Notes: Introduce the Retail Lab 2 Objectives and the Rules + Skill files attendees will build. -->
+
+---
+
+![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
+##### HANDS-ON LAB 2 (PART 2/2) • STEP-BY-STEP INSTRUCTIONS & PROMPTS
+# Lab 2 Instructions & Copy-Paste Antigravity Prompts
+**Follow Steps 1–5 on the left and copy-paste prompts from labs/lab-02-rules-and-skills/PROMPTS.md**
+
+### Step-by-Step Lab 2 Instructions
+- Step 1 (Initialize Lab 02): Run `./labs/lab-02-rules-and-skills/install.sh` (auto-applies Lab 01 solution).
+- Step 2 (Author Root `GEMINI.md`): Document `sku_catalog`, `wms_inventory`, `vendor_contracts`, `promo_campaigns`, `omnichannel_orders`, and mandatory `Decimal(ROUND_HALF_UP)` & `gtin_14` rules.
+- Step 3 (Author `.agents/rules/retail-standards.md`): Codify GS1 GTIN-14 Modulo-10, True ATP (`on_hand - reserved - safety_stock - webhook_delta`), multiplicative promos, margin floor, and Vendor OTIF rules.
+- Step 4 (Author `.agents/skills/margin-otif-audit/SKILL.md`): Add YAML frontmatter (`name: margin-otif-audit`, `description: ...`) and instructions to run `./.venv/bin/python scripts/run_otif_margin_audit.py`.
+- Step 5 (Verify): Run `./labs/lab-02-rules-and-skills/verify.sh` (`5 passed` + executive OTIF/margin reports generated).
+
+### Copy-Paste Prompts (PROMPTS.md) & Verification
+- Prompt 1 — Author Workspace Rules: '/plan Create @GEMINI.md and @.agents/rules/retail-standards.md enforcing Decimal ROUND_HALF_UP, GS1 GTIN-14 Modulo-10 validation, True ATP webhook delta deductions, multiplicative promo stacking, and OTIF chargeback rules.'
+- Prompt 2 — Build Progressive Skill: 'Create @.agents/skills/margin-otif-audit/SKILL.md with YAML frontmatter (name: margin-otif-audit) that executes ./scripts/run_otif_margin_audit.py and writes data/exports/executive_margin_otif_audit.json and .md.'
+- Prompt 3 — Trigger Skill On-Demand: 'Run a full executive margin, True ATP, and supplier OTIF chargeback audit using our workspace skill.'
+- Verify Command: Run `./labs/lab-02-rules-and-skills/verify.sh` and test `/learn`!
+
+> **Delivered by Tryolabs • Self-Healing Checkpoint: ./labs/lab-02-rules-and-skills/apply_solution.sh**
+
+<!-- Speaker Notes: Keep this slide displayed during Retail Lab 2. -->
 
 ---
 
@@ -165,22 +213,46 @@ color: #f0f6fc
 ---
 
 ![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
-##### HANDS-ON LAB 3 (55 MINUTES) • LIVE MCP & COMPLIANCE HOOKS
-# Lab 3: Building a Local FastMCP Server & Compliance Guardrails
-**Give Antigravity live database/telemetry tools and deterministic PreToolUse protection**
+##### HANDS-ON LAB 3 (PART 1/2) • OBJECTIVES & WHAT YOU WILL BUILD
+# Lab 3: Retail FastMCP Server & Margin Hooks — Objectives & Build Spec
+**55 Minutes • Printable PDF Guide: labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_EN.pdf**
 
 ![Architecture Diagram](../assets/governance_en.png)
 
-### Lab 3 Walkthrough & Optimized Prompts
-- Setup: Run ./labs/lab-03-mcp-and-hooks/install.sh
-- Task 1 (FastMCP Server): Implement live tools in @mcp_server/retail_mcp.py (query_true_atp_inventory, audit_vendor_otif_contracts, simulate_promo_margin_guard, list_at_risk_vip_orders)
-- Task 2 (MCP & Deterministic Hook): Wire .agents/mcp_config.json and .agents/hooks.json (runs @scripts/margin_guard_hook.py to block <15% margin floor edits with exit code 2)
-- Optimized Prompt: 'Complete @mcp_server/retail_mcp.py, register @.agents/mcp_config.json and @.agents/hooks.json, then query live VIP stockout risks via MCP'
-- Verify: Run ./labs/lab-03-mcp-and-hooks/verify.sh & inspect data/logs/hook_compliance_audit.jsonl
+### Lab 3 Objectives & What You Will Build
+- Objective 1 (Live Omnichannel Grounding via MCP): Connect Antigravity to live SQLite WMS inventory, VIP orders, and vendor OTIF tables via a local `FastMCP` server.
+- Objective 2 (Deterministic Margin Compliance Guardrails): Intercept every file-edit and shell tool call with a `PreToolUse` hook that hard-blocks disabling the `15%` margin floor (`exit code 2`).
+- What You Will Build #1 (`mcp_server/retail_mcp.py` & `.agents/mcp_config.json`): 4 `@mcp.tool()` functions (`query_true_atp_inventory`, `audit_vendor_otif_contracts`, `simulate_promo_margin_guard`, `list_at_risk_vip_orders`).
+- What You Will Build #2 (`.agents/hooks.json` & `scripts/margin_guard_hook.py`): Deterministic `PreToolUse` guardrail blocking `enforce_floor=False`, margin `< 0.15`, or `DROP`/`DELETE` SQL and logging to `data/logs/hook_compliance_audit.jsonl`.
+- Deliverable & Verification: Pass all 5 MCP & Hook tests in `./labs/lab-03-mcp-and-hooks/verify.sh`.
 
-> **Open labs/lab-03-mcp-and-hooks/PROMPTS.md for copy-pasteable prompts to build and test your MCP server & Hooks.**
+> **Delivered by Tryolabs • Full printable guide: LAB_03_INSTRUCTIONS_EN.pdf**
 
-<!-- Speaker Notes: Have attendees build the FastMCP tools, wire mcp_config.json and hooks.json, and deliberately test a blocked command to see exit code 2 and the audit log in action. -->
+<!-- Speaker Notes: Review the Retail Lab 3 Objectives and the FastMCP + Margin Hook components attendees will build. -->
+
+---
+
+![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
+##### HANDS-ON LAB 3 (PART 2/2) • STEP-BY-STEP INSTRUCTIONS & PROMPTS
+# Lab 3 Instructions & Copy-Paste Antigravity Prompts
+**Follow Steps 1–5 on the left and copy-paste prompts from labs/lab-03-mcp-and-hooks/PROMPTS.md**
+
+### Step-by-Step Lab 3 Instructions
+- Step 1 (Initialize Lab 03): Run `./labs/lab-03-mcp-and-hooks/install.sh` (auto-applies Labs 01–02).
+- Step 2 (Complete `mcp_server/retail_mcp.py`): Implement `simulate_promo_margin_guard(promo_code, category, loyalty_tier)` and `list_at_risk_vip_orders(loyalty_tier, limit)`.
+- Step 3 (Register `.agents/mcp_config.json`): Register `retail-pulse-mcp` invoking `.venv/bin/python -m mcp_server.retail_mcp`.
+- Step 4 (Configure `.agents/hooks.json`): Wire `PreToolUse` to `scripts/margin_guard_hook.py` (blocks `enforce_floor=False` or margin `< 0.15` with exit code `2`).
+- Step 5 (Verify): Run `./labs/lab-03-mcp-and-hooks/verify.sh` (`5 passed` + compliance audit log verified).
+
+### Copy-Paste Prompts (PROMPTS.md) & Verification
+- Prompt 1 — Complete FastMCP Server: '/plan Implement simulate_promo_margin_guard and list_at_risk_vip_orders in @mcp_server/retail_mcp.py so all tool schemas match @tests/test_lab03_mcp_hooks.py.'
+- Prompt 2 — Wire MCP & Hooks Config: 'Create @.agents/mcp_config.json for retail-pulse-mcp and @.agents/hooks.json wiring PreToolUse to ./scripts/margin_guard_hook.py.'
+- Prompt 3 — Test Hook Block (Exit Code 2): Run `echo '{"tool_name":"edit_file","tool_input":{"Path":"src/services/promo_pricing.py","Replacement":"enforce_floor=False"}}' | .venv/bin/python scripts/margin_guard_hook.py`
+- Verify Command: Run `./labs/lab-03-mcp-and-hooks/verify.sh` and inspect `data/logs/hook_compliance_audit.jsonl`.
+
+> **Delivered by Tryolabs • Self-Healing Checkpoint: ./labs/lab-03-mcp-and-hooks/apply_solution.sh**
+
+<!-- Speaker Notes: Keep this slide displayed during Retail Lab 3. -->
 
 ---
 
@@ -205,19 +277,43 @@ color: #f0f6fc
 ---
 
 ![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
-##### HANDS-ON LAB 4 CAPSTONE (55 MINUTES) • ADK, A2A & CLOUD DEPLOYMENT
-# Lab 4 Capstone: Ship the Multi-Agent ADK + A2A System
-**Use Antigravity (/grill-me, /boost, Subagents) to build, test in `adk web`, and validate Terraform deployment**
+##### HANDS-ON LAB 4 CAPSTONE (PART 1/2) • OBJECTIVES & WHAT YOU WILL BUILD
+# Lab 4 Capstone: Multi-Agent ADK, A2A & Terraform — Objectives & Build Spec
+**55 Minutes • Printable PDF Guide: labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_EN.pdf**
 
 ![Architecture Diagram](../assets/adk_a2a_cloud_en.png)
 
-### Lab 4 Walkthrough & Optimized Prompts
-- Setup: Run ./labs/lab-04-multi-agent-capstone/install.sh
-- Task 1 (Google ADK Hierarchy): Implement @src/agents/adk_a2a_orchestrator.py & @adk_agents/retail_pulse/agent.py (WMSInventoryATPAgent + MerchandisingMarginOTIFAgent -> RetailPulseOrchestratorAgent)
-- Task 2 (A2A Protocol): Expose GET /.well-known/agent.json & POST /api/v1/a2a (JSON-RPC 2.0 tasks/send) + omnichannel split-fulfillment & OTIF chargeback routes
-- Task 3 (Local ADK Dev UI): Run ./scripts/run_adk_web.sh to test interactively in `adk web` (http://localhost:8080) & run ./labs/lab-04-multi-agent-capstone/verify.sh
-- Task 4 (Terraform & Gemini Enterprise): Validate with ./deploy/deploy_gcp.sh --dry-run, deploy to Cloud Run via Terraform, and connect via ./deploy/register_gemini_enterprise_agent.sh!
+### Lab 4 Objectives & What You Will Build
+- Objective 1 (Multi-Agent System Design with Google ADK & A2A): Build a hierarchical multi-agent system with Google ADK (`LlmAgent`) and expose an A2A Agent Card + JSON-RPC 2.0 endpoint.
+- Objective 2 (Local ADK Dev UI & Cloud Terraform Deployment): Test agent handoffs locally in `adk web` (`http://localhost:8080`) and validate Cloud Run + Gemini Enterprise provisioning with Terraform.
+- What You Will Build #1 (`src/services/fulfillment_router.py`): Margin-preserving omnichannel split-shipment optimizer (`evaluate_candidates` & `optimize_at_risk_orders`) rescuing all 35 VIP orders.
+- What You Will Build #2 (`src/agents/adk_a2a_orchestrator.py` & `adk_agents/retail_pulse/`): `WMSInventoryATPAgent` + `MerchandisingMarginOTIFAgent` coordinated by `RetailPulseOrchestratorAgent`, plus `GET /.well-known/agent.json` & `POST /api/v1/a2a`.
+- What You Will Build #3 (Cloud Infrastructure): Validate `infra/terraform/main.tf` and Gemini Enterprise registration via `./labs/lab-04-multi-agent-capstone/deploy_gcp.sh --dry-run`.
 
-> **Congratulations! Run ./labs/lab-04-multi-agent-capstone/verify.sh to see your full test suite pass 100%!**
+> **Delivered by Tryolabs • Full printable guide: LAB_04_INSTRUCTIONS_EN.pdf**
 
-<!-- Speaker Notes: Guide attendees through the Capstone! Have them test their multi-agent hierarchy in both the FastAPI dashboard, the ADK Development UI (`./scripts/run_adk_web.sh` at localhost:8080), and `./deploy/deploy_gcp.sh --dry-run` (or live GCP deploy!). -->
+<!-- Speaker Notes: Introduce the Retail Lab 4 Capstone Objectives and the 3 major deliverables. -->
+
+---
+
+![Tryolabs Logo](../assets/tryolabs-logo-dark-bg.png)
+##### HANDS-ON LAB 4 CAPSTONE (PART 2/2) • STEP-BY-STEP INSTRUCTIONS & PROMPTS
+# Lab 4 Instructions, `adk web` Testing & Terraform Cloud Deploy
+**Follow Steps 1–5 on the left and copy-paste prompts from labs/lab-04-multi-agent-capstone/PROMPTS.md**
+
+### Step-by-Step Lab 4 Instructions
+- Step 1 (Initialize Lab 04): Run `./labs/lab-04-multi-agent-capstone/install.sh`.
+- Step 2 (Omnichannel Fulfillment Router): Implement `evaluate_candidates()` and `optimize_at_risk_orders()` in `src/services/fulfillment_router.py` (rerouting 35 VIP orders by highest post-shipping net margin).
+- Step 3 (Google ADK & A2A Orchestrator): Complete `src/agents/adk_a2a_orchestrator.py` (`WMSInventoryATPAgent`, `MerchandisingMarginOTIFAgent`, `RetailPulseOrchestratorAgent`, `GET /.well-known/agent.json`, `POST /api/v1/a2a`).
+- Step 4 (Local ADK Dev UI): Run `./scripts/run_adk_web.sh --port 8080` and test `retail_pulse` interactively at `http://localhost:8080`.
+- Step 5 (Terraform & Full Verification): Run `./labs/lab-04-multi-agent-capstone/deploy_gcp.sh --dry-run` and `./labs/lab-04-multi-agent-capstone/verify.sh` (**20/20 tests pass!**).
+
+### Copy-Paste Prompts, `adk web` & Cloud Commands
+- Prompt 1 — Fulfillment Router: '/plan Implement evaluate_candidates and optimize_at_risk_orders in @src/services/fulfillment_router.py ranking nodes by (-post_shipping_net_margin_usd, shipping_cost_usd, DC priority).'
+- Prompt 2 — ADK + A2A Orchestrator: '/teamwork Implement WMSInventoryATPAgent, MerchandisingMarginOTIFAgent, RetailPulseOrchestratorAgent, build_a2a_agent_card, and handle_a2a_jsonrpc in @src/agents/adk_a2a_orchestrator.py.'
+- Prompt 3 — Interactive `adk web` (http://localhost:8080): 'Execute omnichannel remediation: enforce 15% margin floor, reroute all 35 VIP orders, and claim OTIF vendor chargebacks.'
+- Cloud Deploy & Verify: Run `./labs/lab-04-multi-agent-capstone/deploy_gcp.sh --dry-run` and `./labs/lab-04-multi-agent-capstone/verify.sh`.
+
+> **Delivered by Tryolabs • Self-Healing Checkpoint: ./labs/lab-04-multi-agent-capstone/apply_solution.sh**
+
+<!-- Speaker Notes: Keep this slide projected during the Retail Lab 4 Capstone. -->

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Retail Pulse — Omnichannel & Commercial Intelligence Workspace Rules
 
 You are working inside **Retail Pulse**, an enterprise omnichannel commerce, WMS/POS inventory synchronization, and supplier commercial intelligence platform.

@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Laboratorio 01: Triaje de Piso de Margen Promocional e Inventario True ATP
 
 **Impartido por Tryolabs • Potenciado por Google Antigravity y Gemini Enterprise**

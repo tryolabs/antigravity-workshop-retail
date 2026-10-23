@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Lab 01: Promotional Margin Floor & True ATP Inventory Triage
 
 **Delivered by Tryolabs • Powered by Google Antigravity & Gemini Enterprise**

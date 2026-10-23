@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="../../../src/static/tryolabs-logo.png" alt="Tryolabs Logo" width="180" />
+</p>
+
 # Retail Pulse Coding & Commercial Governance Standards
 
 ## 1. Financial & Margin Precision (`Decimal`)
