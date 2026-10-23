@@ -36,7 +36,7 @@ FORBIDDEN_PATTERNS: list[tuple[re.Pattern[str], str]] = [
         "Deleting commercial vendor contracts or omnichannel orders violates audit retention rules.",
     ),
     (
-        re.compile(r"DISABLE_MARGIN_FLOOR|BYPASS_CONTRACT_MARGIN_FLOOR", re.IGNORECASE),
+        re.compile(r"DISABLE_MARGIN_FLOOR|BYPASS_CONTRACT_MARGIN_FLOOR|enforce_floor\s*=\s*False", re.IGNORECASE),
         "Bypassing commercial contract margin floors is strictly prohibited by Retail Pulse governance.",
     ),
     (
@@ -50,11 +50,12 @@ def _append_compliance_audit_log(payload: dict[str, Any], decision_obj: dict[str
     try:
         AUDIT_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
         tool_call = payload.get("toolCall") or {}
+        tool_name = tool_call.get("name") or payload.get("tool_name") or "unknown"
         entry = {
             "timestamp": dt.datetime.now(dt.timezone.utc).isoformat(),
             "conversationId": payload.get("conversationId", "local-test"),
             "stepIdx": payload.get("stepIdx", 0),
-            "toolName": tool_call.get("name", "unknown"),
+            "toolName": tool_name,
             "decision": decision_obj.get("decision"),
             "reason": decision_obj.get("reason"),
         }
@@ -67,8 +68,8 @@ def _append_compliance_audit_log(payload: dict[str, Any], decision_obj: dict[str
 def evaluate_hook_payload(payload: dict[str, Any]) -> dict[str, Any]:
     """Inspect a PreToolUse hook payload, log the audit decision, and return {'decision': 'allow'|'deny', 'reason': ...}."""
     tool_call = payload.get("toolCall") or {}
-    tool_name = str(tool_call.get("name", ""))
-    args = tool_call.get("args") or {}
+    tool_name = str(tool_call.get("name") or payload.get("tool_name") or "")
+    args = tool_call.get("args") or payload.get("tool_input") or payload
 
     serialized_args = json.dumps(args)
     for pattern, reason in FORBIDDEN_PATTERNS:

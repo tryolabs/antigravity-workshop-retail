@@ -7,10 +7,25 @@ cd "$ROOT_DIR"
 PORT="${ADK_WEB_PORT:-8080}"
 HOST="${ADK_WEB_HOST:-127.0.0.1}"
 
-if [[ "${1:-}" == "--dry-run" ]] || [[ "${1:-}" == "--check" ]]; then
-  ./.venv/bin/python -c "from adk_agents.retail_pulse.agent import root_agent; assert root_agent.name == 'retail_pulse_root_agent'; print('[OK] ADK root_agent verified:', root_agent.name, 'with sub_agents:', [a.name for a in root_agent.sub_agents])"
-  exit 0
-fi
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --dry-run|--check)
+      ./.venv/bin/python -c "from adk_agents.retail_pulse.agent import root_agent; assert root_agent.name == 'retail_pulse_root_agent'; print('[OK] ADK root_agent verified:', root_agent.name, 'with sub_agents:', [a.name for a in root_agent.sub_agents])"
+      exit 0
+      ;;
+    --port)
+      PORT="$2"
+      shift 2
+      ;;
+    --host)
+      HOST="$2"
+      shift 2
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
 
 ./.venv/bin/adk telemetry disable >/dev/null 2>&1 || true
 
@@ -23,5 +38,4 @@ echo "=================================================================="
 
 exec ./.venv/bin/adk web adk_agents \
   --host "$HOST" \
-  --port "$PORT" \
-  --logo-text "Retail Pulse ADK (Delivered by Tryolabs)"
+  --port "$PORT"
