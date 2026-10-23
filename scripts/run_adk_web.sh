@@ -7,10 +7,12 @@ cd "$ROOT_DIR"
 PORT="${ADK_WEB_PORT:-8080}"
 HOST="${ADK_WEB_HOST:-127.0.0.1}"
 
-if [[ "${1:-}" == "--dry-run" ]]; then
+if [[ "${1:-}" == "--dry-run" ]] || [[ "${1:-}" == "--check" ]]; then
   ./.venv/bin/python -c "from adk_agents.retail_pulse.agent import root_agent; assert root_agent.name == 'retail_pulse_root_agent'; print('[OK] ADK root_agent verified:', root_agent.name, 'with sub_agents:', [a.name for a in root_agent.sub_agents])"
   exit 0
 fi
+
+./.venv/bin/adk telemetry disable >/dev/null 2>&1 || true
 
 echo "=================================================================="
 echo " Launching Google ADK Development UI (adk web) — Retail Pulse"

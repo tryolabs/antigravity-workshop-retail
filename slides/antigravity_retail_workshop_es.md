@@ -272,7 +272,7 @@ color: #f0f6fc
 
 > **¡Desarrolla y prueba 100% localmente con `adk web` + `pytest`, y despliega a Google Cloud y Gemini Enterprise con Terraform!**
 
-<!-- Speaker Notes: Explica cómo Antigravity ayuda a diseñar y programar el sistema multi-agente basado en Google ADK + protocolo A2A, cómo probarlo localmente con `adk web` y cómo desplegarlo con Terraform a Google Cloud y Gemini Enterprise. -->
+<!-- Speaker Notes: Explica cómo Antigravity ayuda a diseñar y programar el sistema multi-agente basado en Google ADK + protocolo A2A, cómo probarlo localmente con adk web y cómo desplegarlo con Terraform a Google Cloud y Gemini Enterprise. -->
 
 ---
 

@@ -272,7 +272,7 @@ color: #f0f6fc
 
 > **Develop & test 100% locally with `adk web` + `pytest`, then deploy to Google Cloud & Gemini Enterprise with Terraform!**
 
-<!-- Speaker Notes: Explain the synergy between Antigravity subagents (which help you write the code) and Google ADK + A2A (the runtime multi-agent system you build, test locally in `adk web`, deploy with Terraform, and register in Gemini Enterprise). -->
+<!-- Speaker Notes: Explain the synergy between Antigravity subagents (which help you write the code) and Google ADK + A2A (the runtime multi-agent system you build, test locally in adk web, deploy with Terraform, and register in Gemini Enterprise). -->
 
 ---
 
