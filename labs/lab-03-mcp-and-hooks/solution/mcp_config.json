@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "retail-pulse-mcp": {
+      "command": "./.venv/bin/python",
+      "args": [
+        "mcp_server/retail_mcp.py"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}

@@ -1,0 +1,173 @@
+"""
+FastAPI REST API & Live Omnichannel Command Center Dashboard for Retail Pulse (Lab 4 Solution).
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any
+
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import FileResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, Field
+
+from src.database import fetch_all
+from src.models import PromoEvaluationRequest
+from src.services.fulfillment_router import (
+    claim_vendor_otif_chargebacks,
+    optimize_at_risk_order_routing,
+)
+from src.services.inventory_atp import (
+    audit_vip_oversell_exposure,
+    calculate_location_atp,
+    get_sku_network_atp,
+)
+from src.services.promo_pricing import (
+    audit_margin_hold_orders,
+    evaluate_order_line_pricing,
+)
+from src.services.vendor_otif_auditor import audit_vendor_contracts
+
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+
+app = FastAPI(
+    title="Retail Pulse: Omnichannel Order, Inventory Sync & Commercial Margin Intelligence",
+    version="1.0.0",
+    description=(
+        "Google Antigravity Retail Industry Workshop API combining POS/WMS/RFID/EDI "
+        "technical telemetry with Commercial Margin Floors, VIP LTV, and Vendor OTIF Contracts."
+    ),
+)
+
+if STATIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+
+class OptimizeRoutingRequest(BaseModel):
+    loyalty_tiers: list[str] | None = Field(
+        default=None,
+        description="Optional filter for loyalty tiers (e.g., ['DIAMOND', 'GOLD'])",
+    )
+    persist_changes: bool = Field(
+        default=False,
+        description="Whether to persist rerouted fulfillment locations in SQLite",
+    )
+
+
+class ClaimChargebacksRequest(BaseModel):
+    min_shortfall_pct: float = Field(
+        default=0.0,
+        ge=0.0,
+        description="Minimum OTIF percentage point shortfall to include in claims",
+    )
+
+
+@app.get("/", response_class=HTMLResponse)
+def serve_dashboard() -> Any:
+    """Serve the Live Omnichannel Command Center & Commercial Margin Web Dashboard."""
+    index_file = STATIC_DIR / "index.html"
+    if not index_file.exists():
+        return HTMLResponse("<h1>Retail Pulse Dashboard not found</h1>", status_code=404)
+    return FileResponse(str(index_file))
+
+
+@app.get("/api/v1/health")
+def health_check() -> dict[str, str]:
+    return {"status": "ok", "service": "retail-pulse-omnichannel-api"}
+
+
+@app.post("/api/v1/pricing/evaluate")
+def api_evaluate_pricing(req: PromoEvaluationRequest) -> dict[str, Any]:
+    try:
+        res = evaluate_order_line_pricing(
+            sku=req.sku,
+            qty=req.qty,
+            promo_codes=req.promo_codes,
+        )
+        return res.model_dump(mode="json")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/inventory/atp/{sku}")
+def api_get_sku_atp(
+    sku: str,
+    location_id: str | None = Query(default=None),
+    required_qty: int = Query(default=1, ge=1),
+) -> dict[str, Any]:
+    try:
+        if location_id:
+            loc_res = calculate_location_atp(sku=sku, location_id=location_id, required_qty=required_qty)
+            return {"sku": sku, "locations": [loc_res.model_dump(mode="json")]}
+        net_res = get_sku_network_atp(sku=sku, required_qty=required_qty)
+        if not net_res:
+            raise ValueError(f"Unknown SKU: {sku}")
+        return {"sku": sku, "locations": [r.model_dump(mode="json") for r in net_res]}
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@app.get("/api/v1/vendors/otif-audit")
+def api_vendor_otif_audit(only_breaching: bool = Query(default=False)) -> dict[str, Any]:
+    return audit_vendor_contracts(only_breaching=only_breaching)
+
+
+@app.post("/api/v1/fulfillment/optimize-routing")
+def api_optimize_routing(req: OptimizeRoutingRequest | None = None) -> dict[str, Any]:
+    payload = req or OptimizeRoutingRequest()
+    result = optimize_at_risk_order_routing(
+        loyalty_tiers=payload.loyalty_tiers,
+        persist_changes=payload.persist_changes,
+    )
+    if result.get("status") == "NOT_IMPLEMENTED_STUB":
+        raise HTTPException(
+            status_code=501,
+            detail="Fulfillment routing engine is not implemented yet (Complete Lab 4 Capstone).",
+        )
+    return result
+
+
+@app.post("/api/v1/vendors/claim-chargebacks")
+def api_claim_chargebacks(req: ClaimChargebacksRequest | None = None) -> dict[str, Any]:
+    payload = req or ClaimChargebacksRequest()
+    result = claim_vendor_otif_chargebacks(min_shortfall_pct=payload.min_shortfall_pct)
+    if result.get("status") == "NOT_IMPLEMENTED_STUB":
+        raise HTTPException(
+            status_code=501,
+            detail="Vendor chargeback engine is not implemented yet (Complete Lab 4 Capstone).",
+        )
+    return result
+
+
+@app.get("/api/v1/dashboard/summary")
+def api_dashboard_summary() -> dict[str, Any]:
+    """Return full live KPIs and tables for the Retail Pulse Web Dashboard."""
+    margin_audit = audit_margin_hold_orders()
+    vip_atp_audit = audit_vip_oversell_exposure()
+    vendor_audit = audit_vendor_contracts(only_breaching=False)
+    routing_sim = optimize_at_risk_order_routing(persist_changes=False)
+    chargeback_sim = claim_vendor_otif_chargebacks(min_shortfall_pct=0.0)
+    pos_events = fetch_all("SELECT * FROM pos_telemetry ORDER BY webhook_sync_lag_sec DESC LIMIT 12")
+    sample_inventory = fetch_all(
+        """
+        SELECT * FROM wms_inventory
+        WHERE location_id IN ('STORE-NYC-5TH', 'WH-EAST-NJ01', 'WH-CENTRAL-TX03')
+        ORDER BY sku, location_id
+        LIMIT 18
+        """
+    )
+    enriched_inventory = []
+    for row in sample_inventory:
+        atp = calculate_location_atp(sku=row["sku"], location_id=row["location_id"], required_qty=1)
+        enriched_inventory.append(atp.model_dump(mode="json"))
+
+    return {
+        "margin_audit": margin_audit,
+        "vip_atp_audit": vip_atp_audit,
+        "vendor_audit": vendor_audit,
+        "routing_simulation": routing_sim,
+        "chargeback_simulation": chargeback_sim,
+        "pos_telemetry": pos_events,
+        "inventory_snapshot": enriched_inventory,
+    }

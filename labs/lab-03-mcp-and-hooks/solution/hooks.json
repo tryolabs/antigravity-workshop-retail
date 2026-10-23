@@ -1,0 +1,17 @@
+{
+  "retail-margin-contract-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command|write_file|edit_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ../scripts/margin_guard_hook.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

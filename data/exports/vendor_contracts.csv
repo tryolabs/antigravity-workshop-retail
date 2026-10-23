@@ -1,0 +1,11 @@
+contract_id,vendor_name,category,buyer_id,annual_spend_commitment_usd,wholesale_unit_cost_usd,contract_min_margin_floor_pct,otif_target_pct,actual_otif_pct,late_shipments_count,short_shipments_count,delayed_po_value_usd,chargeback_penalty_pct,status
+VND-SONY-001,Sony Consumer Electronics NA,Electronics,BUY-ELEC-101,5400000.0,620.0,22.0,97.0,84.5,14,9,420000.0,4.5,BREACH_HOLD
+VND-NIKE-002,Nike Global Footwear Supply,Footwear,BUY-FTWR-104,4200000.0,88.0,28.0,96.0,97.2,2,1,0.0,3.5,COMPLIANT
+VND-DYSON-003,Dyson Home Appliances Ltd,Home Appliances,BUY-HOME-108,3800000.0,410.0,24.0,98.0,82.0,18,11,510000.0,5.0,BREACH_HOLD
+VND-LEVI-004,Levi Strauss Apparel Wholesale,Apparel,BUY-APPR-112,2600000.0,44.0,32.0,95.0,96.4,3,1,0.0,3.0,COMPLIANT
+VND-SAMS-005,Samsung Display & TV Distribution,Electronics,BUY-ELEC-101,5500000.0,980.0,20.0,97.5,86.2,15,8,680000.0,4.0,BREACH_HOLD
+VND-NESP-006,Nespresso Gourmet Coffee Systems,Kitchen & Beverage,BUY-KTCH-119,1450000.0,165.0,26.0,96.0,88.5,9,6,195000.0,4.0,BREACH_HOLD
+VND-PATA-007,Patagonia Outdoor Gear,Outdoor & Active,BUY-OUTD-122,2100000.0,115.0,30.0,95.0,95.8,2,2,0.0,3.0,COMPLIANT
+VND-BOSE-008,Bose Premium Audio Corp,Electronics,BUY-ELEC-101,1950000.0,225.0,25.0,96.5,81.4,16,12,310000.0,4.5,BREACH_HOLD
+VND-LULU-009,Technical Athleisure Collective,Apparel,BUY-APPR-112,1750000.0,58.0,31.0,95.5,97.0,1,1,0.0,3.5,COMPLIANT
+VND-BREV-010,Breville Smart Kitchen Group,Kitchen & Beverage,BUY-KTCH-119,980000.0,390.0,23.0,96.0,87.9,8,5,140000.0,3.5,BREACH_HOLD
