@@ -145,7 +145,76 @@ icacls "C:\Workshops\antigravity-workshop-retail" /grant "<UsuarioAsistente>:(OI
 
 ---
 
-## 6. Lista de Verificación antes del Taller (Checklist para TI)
+## 6. APIs, Roles IAM y Permisos de Google Cloud para Antigravity + Gemini Enterprise
+
+Para permitir que los asistentes autentiquen **Google Antigravity** (`agy`, Antigravity IDE y Antigravity 2.0) con **Gemini Enterprise**, ejecuten **Google ADK (`adk web`)** contra **Vertex AI** y desplieguen/registren el agente A2A **`retail-pulse`** en el Laboratorio 4, el Administrador de Google Cloud debe habilitar las siguientes APIs y otorgar los siguientes roles IAM en el proyecto de Google Cloud del taller (`<WORKSHOP_GCP_PROJECT_ID>`).
+
+### 6.1 APIs de Google Cloud que Deben Habilitarse (`gcloud services enable`)
+| Nombre del Servicio API en GCP | Título del Servicio | Propósito en `antigravity-workshop-retail` | Estado |
+| :--- | :--- | :--- | :--- |
+| `cloudaicompanion.googleapis.com` | **Gemini for Google Cloud API** (Cloud AI Companion API) | API principal de backend para **Google Antigravity** (`agy`, IDE y 2.0) bajo suscripciones Gemini Enterprise, generación de código, uso de herramientas agénticas y validación de licencia | **OBLIGATORIA (Labs 1–4)** |
+| `aiplatform.googleapis.com` | **Vertex AI API** | Impulsa **Google Agent Development Kit (`google-adk`)** y el SDK `google-genai` (`GOOGLE_GENAI_USE_VERTEXAI=TRUE`) para la jerarquía multi-agente y `adk web` del Lab 4 | **OBLIGATORIA (Lab 4)** |
+| `discoveryengine.googleapis.com` | **Gemini Enterprise / Discovery Engine API** | Permite registrar e invocar el endpoint A2A (`AgentCard`) de `retail-pulse` dentro de Gemini Enterprise (`./deploy/register_gemini_enterprise_agent.sh`) | **OBLIGATORIA (Lab 4)** |
+| `serviceusage.googleapis.com` | **Service Usage API** | Permite a los asistentes verificar APIs activas y asociar el consumo de cuota al proyecto del taller (`x-goog-user-project`) | **OBLIGATORIA (Labs 1–4)** |
+| `cloudresourcemanager.googleapis.com` | **Cloud Resource Manager API** | Inspección de metadatos del proyecto e inicialización del proveedor Terraform | **OBLIGATORIA (Lab 4)** |
+| `run.googleapis.com` | **Cloud Run Admin API** | Despliega el servicio contenedorizado FastAPI + ADK + A2A (`retail-pulse`) en Cloud Run v2 (`infra/terraform/`) | **OBLIGATORIA (Lab 4 Deploy)** |
+| `artifactregistry.googleapis.com` | **Artifact Registry API** | Almacena la imagen Docker del servicio `retail-pulse` (`retail-pulse-repo`) | **OBLIGATORIA (Lab 4 Deploy)** |
+| `cloudbuild.googleapis.com` | **Cloud Build API** | Construye la imagen de contenedor de `retail-pulse` mediante `gcloud builds submit` | **OBLIGATORIA (Lab 4 Deploy)** |
+| `iam.googleapis.com` | **Identity and Access Management (IAM) API** | Crea la cuenta de servicio de mínimo privilegio para Cloud Run (`retail-pulse-sa`) | **OBLIGATORIA (Lab 4 Deploy)** |
+| `logging.googleapis.com` | **Cloud Logging API** | Registra los Cloud Audit Logs de `cloudaicompanion.googleapis.com` y la telemetría de Cloud Run | **OBLIGATORIA (Labs 1–4)** |
+
+### 6.2 Roles IAM y Permisos Específicos para Cada Asistente (`user:<asistente>@empresa.com`)
+Además de asignar una **licencia activa de Gemini Enterprise / Gemini Code Assist Enterprise** a cada asistente en la consola de Google Cloud (**Admin for Gemini -> License Management**), otorgue a cada asistente los siguientes roles IAM en el proyecto de GCP del taller:
+
+| Rol IAM en Google Cloud | Nombre del Rol | Permisos IAM Clave Incluidos | Por Qué Es Necesario |
+| :--- | :--- | :--- | :--- |
+| `roles/cloudaicompanion.user` | **Gemini for Google Cloud User** | `cloudaicompanion.companions.generateChat`, `cloudaicompanion.companions.generateCode`, `cloudaicompanion.instances.completeCode`, `cloudaicompanion.instances.generateChat`, `cloudaicompanion.instances.generateCode`, `cloudaicompanion.instances.queryEffectiveSetting`, `cloudaicompanion.entitlements.get` | **Obligatorio para Google Antigravity**: Autoriza al desarrollador a iniciar sesión en `agy`, Antigravity IDE y Antigravity 2.0 con Gemini Enterprise y ejecutar inferencia agéntica |
+| `roles/serviceusage.serviceUsageConsumer` | **Service Usage Consumer** | `serviceusage.services.use`, `serviceusage.services.get`, `serviceusage.services.list` | **Obligatorio para Cuota de API**: Permite que la sesión del asistente (`gcloud auth application-default set-quota-project`) utilice la cuota del proyecto de GCP del taller |
+| `roles/aiplatform.user` | **Vertex AI User** | `aiplatform.endpoints.predict`, `aiplatform.endpoints.generateContent`, `aiplatform.endpoints.streamGenerateContent`, `aiplatform.models.get` | **Obligatorio para ADK en el Lab 4**: Permite a `adk web adk_agents/retail_pulse` y al `Runner` de ADK invocar modelos Gemini en Vertex AI (`GOOGLE_GENAI_USE_VERTEXAI=TRUE`) |
+| `roles/discoveryengine.editor` *(o `roles/discoveryengine.viewer`)* | **Discovery Engine Editor / Viewer** | `discoveryengine.engines.get`, `discoveryengine.engines.list`, `discoveryengine.assistants.get`, `discoveryengine.agents.create`, `discoveryengine.agents.update` | **Requerido en el Lab 4 (Gemini Enterprise)**: Permite inspeccionar motores de Gemini Enterprise y registrar el `AgentCard` A2A de `retail-pulse` (`/.well-known/agent.json`) |
+| `roles/viewer` | **Project Viewer** | `resourcemanager.projects.get`, `run.services.get`, `run.services.list` | **Recomendado**: Permite consultar la URL del servicio Cloud Run `retail-pulse` y la configuración del proyecto |
+
+### 6.3 Roles IAM para el Administrador Cloud / Instructor y Cuenta de Servicio de Cloud Run
+| Identidad / Rol Operativo | Roles IAM Requeridos | Propósito |
+| :--- | :--- | :--- |
+| **Administrador Cloud / Instructor** (`user:<instructor>@empresa.com`) | `roles/cloudaicompanion.admin`, `roles/logging.privateLogViewer`, `roles/run.admin`, `roles/artifactregistry.admin`, `roles/cloudbuild.builds.editor`, `roles/iam.serviceAccountAdmin`, `roles/iam.serviceAccountUser`, `roles/serviceusage.serviceUsageAdmin` | Asigna licencias de Gemini Enterprise, demuestra los Cloud Audit Logs de `cloudaicompanion.googleapis.com` en el Bloque 1 y ejecuta `terraform apply` (`infra/terraform/`) para desplegar `retail-pulse` en Cloud Run v2 |
+| **Cuenta de Servicio de Cloud Run** (`retail-pulse-sa@<project>.iam.gserviceaccount.com`) | `roles/aiplatform.user`, `roles/discoveryengine.viewer`, `roles/logging.logWriter` | Creada automáticamente por `infra/terraform/main.tf` como identidad de mínimo privilegio asociada al servicio Cloud Run `retail-pulse` |
+
+### 6.4 Comandos `gcloud` de Aprovisionamiento en Un Solo Paso para el Administrador Cloud
+```bash
+export PROJECT_ID="<WORKSHOP_GCP_PROJECT_ID>"
+
+# 1. Habilitar todas las APIs requeridas para Antigravity, Gemini Enterprise, Vertex AI, ADK y Cloud Run
+gcloud services enable \
+  cloudaicompanion.googleapis.com \
+  aiplatform.googleapis.com \
+  discoveryengine.googleapis.com \
+  serviceusage.googleapis.com \
+  cloudresourcemanager.googleapis.com \
+  run.googleapis.com \
+  artifactregistry.googleapis.com \
+  cloudbuild.googleapis.com \
+  iam.googleapis.com \
+  logging.googleapis.com \
+  --project="${PROJECT_ID}"
+
+# 2. Otorgar los roles IAM requeridos a cada asistente del taller
+export ATTENDEE_EMAIL="<asistente>@empresa.com"
+for ROLE in \
+  roles/cloudaicompanion.user \
+  roles/serviceusage.serviceUsageConsumer \
+  roles/aiplatform.user \
+  roles/discoveryengine.editor \
+  roles/viewer; do
+  gcloud projects add-iam-policy-binding "${PROJECT_ID}" \
+    --member="user:${ATTENDEE_EMAIL}" \
+    --role="${ROLE}"
+done
+```
+
+---
+
+## 7. Lista de Verificación antes del Taller (Checklist para TI)
 
 Ejecute `./admin_requirements/admin_provision_workstation.sh --verify-only` iniciando sesión como el **usuario estándar del asistente (sin sudo)** y confirme que todos los puntos pasen exitosamente:
 
@@ -153,7 +222,7 @@ Ejecute `./admin_requirements/admin_provision_workstation.sh --verify-only` inic
 2. `uv --version` reporta `uv 0.5+`.
 3. `git --version` y `sqlite3 --version` responden correctamente desde el `PATH`.
 4. `terraform -version` y `gcloud --version` están disponibles en el `PATH` (para el Lab 4).
-5. Google Antigravity (`Antigravity 2.0`, `Antigravity IDE` y/o CLI `agy`) abre e inicia sesión correctamente.
+5. Google Antigravity (`Antigravity 2.0`, `Antigravity IDE` y/o CLI `agy`) abre e inicia sesión correctamente con `roles/cloudaicompanion.user` y `roles/serviceusage.serviceUsageConsumer`.
 6. `./.venv/bin/python -c "import fastapi, uvicorn, pydantic, pytest, httpx, mcp, google.adk, google.genai"` finaliza con código `0`.
 7. `./.venv/bin/adk --version` y `./scripts/run_adk_web.sh --check` finalizan con código `0`.
 8. Ejecutar `./install.sh` muestra `[OK] Pre-provisioned .venv detected with all required packages (zero-install mode)` e inicializa `data/retail_pulse.db` sin errores de permisos.
