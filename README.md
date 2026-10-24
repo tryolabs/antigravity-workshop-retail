@@ -3,7 +3,7 @@
   <h1>Retail Pulse — Google Antigravity Hands-On Workshop</h1>
   <p><strong>Omnichannel Order, Inventory Sync & Commercial Margin / Vendor Contract Intelligence Platform</strong></p>
   <p><em>Delivered by <strong>Tryolabs</strong> | 4-Hour Enterprise Retail & Omnichannel Commerce Workshop</em></p>
-  <p><a href="README.md"><strong>English</strong></a> | <a href="README.es.md"><strong>Español</strong></a> | <a href="INSTRUCTOR_DEMO_GUIDE.md"><strong>Instructor Demo Guide (EN)</strong></a> | <a href="INSTRUCTOR_DEMO_GUIDE.es.md"><strong>Guía del Instructor (ES)</strong></a></p>
+  <p><a href="README.md"><strong>English</strong></a> | <a href="README.es.md"><strong>Español</strong></a></p>
 </div>
 
 ---
@@ -59,12 +59,12 @@ This repository supports **both Technical Engineers and Commercial/Operations Ma
 
 | Module | Duration | Focus Area & Antigravity Capabilities | Lab Guide & Prompt Playbook | Automation Scripts |
 | :--- | :--- | :--- | :--- | :--- |
-| **Setup & Briefing** | `00:00 - 00:30` | Environment setup, Retail Pulse Command Center tour, Antigravity IDE + Agent Manager overview | [Instructor Guide (EN)](INSTRUCTOR_DEMO_GUIDE.md) / [ES](INSTRUCTOR_DEMO_GUIDE.es.md) | `./install.sh` (or `./install.ps1`) |
+| **Setup & Briefing** | `00:00 - 00:30` | Environment setup, Retail Pulse Command Center tour, Antigravity IDE + Agent Manager overview | [Quickstart Guide](#4-quickstart-instructions) | `./install.sh` (or `./install.ps1`) |
 | **Lab 01** | `00:30 - 01:15` | **Omnichannel Flash-Sale Triage**: Context `@` mentions, `/plan`, Inline Edit (`Cmd+I`), fixing Promo Margin Stacking (Bug #1A) & Phantom ATP Inventory (Bug #1B) | [Lab 01 Guide (EN)](labs/lab-01-margin-inventory-triage/README.md) \| [ES](labs/lab-01-margin-inventory-triage/README.es.md)<br>[Prompts (EN)](labs/lab-01-margin-inventory-triage/PROMPTS.md) \| [ES](labs/lab-01-margin-inventory-triage/PROMPTS.es.md) | `labs/lab-01-margin-inventory-triage/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
 | **Lab 02** | `01:15 - 02:00` | **Customizations (`GEMINI.md`, Rules & Skills)**: Encoding GS1 GTIN-14, 15% margin floor & OTIF standards in `.agents/rules/retail-standards.md` and building `.agents/skills/margin-otif-audit/SKILL.md` | [Lab 02 Guide (EN)](labs/lab-02-rules-and-skills/README.md) \| [ES](labs/lab-02-rules-and-skills/README.es.md)<br>[Prompts (EN)](labs/lab-02-rules-and-skills/PROMPTS.md) \| [ES](labs/lab-02-rules-and-skills/PROMPTS.es.md) | `labs/lab-02-rules-and-skills/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
 | **Lab 03** | `02:00 - 02:55` | **FastMCP Server, Deterministic Hooks & Enterprise Governance**: Building `mcp_server/retail_mcp.py`, `.agents/mcp_config.json`, `PreToolUse` hook (`scripts/margin_guard_hook.py`), and Gemini Enterprise / Cloud Security | [Lab 03 Guide (EN)](labs/lab-03-mcp-and-hooks/README.md) \| [ES](labs/lab-03-mcp-and-hooks/README.es.md)<br>[Prompts (EN)](labs/lab-03-mcp-and-hooks/PROMPTS.md) \| [ES](labs/lab-03-mcp-and-hooks/PROMPTS.es.md) | `labs/lab-03-mcp-and-hooks/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
 | **Lab 04** | `02:55 - 03:45` | **Multi-Agent Capstone (Google ADK, A2A, `adk web`, Cloud Run & Gemini Enterprise)**: Building Smart Split-Shipment Routing (`fulfillment_router.py`), ADK + A2A Orchestrator (`adk_a2a_orchestrator.py`), testing via `adk web`, and deploying via Terraform to Cloud Run & Gemini Enterprise | [Lab 04 Guide (EN)](labs/lab-04-multi-agent-capstone/README.md) \| [ES](labs/lab-04-multi-agent-capstone/README.es.md)<br>[Prompts (EN)](labs/lab-04-multi-agent-capstone/PROMPTS.md) \| [ES](labs/lab-04-multi-agent-capstone/PROMPTS.es.md) | `labs/lab-04-multi-agent-capstone/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Wrap-Up** | `03:45 - 04:00` | Production rollout patterns, Q&A with Tryolabs solutions architects | [Instructor Guide (EN)](INSTRUCTOR_DEMO_GUIDE.md) | `./labs/lab-04-multi-agent-capstone/verify.sh` |
+| **Wrap-Up** | `03:45 - 04:00` | Production rollout patterns, Q&A with Tryolabs solutions architects | [Lab 04 Guide (EN)](labs/lab-04-multi-agent-capstone/README.md) | `./labs/lab-04-multi-agent-capstone/verify.sh` |
 
 ---
 
@@ -155,7 +155,6 @@ Enterprise retail adopters require defense-in-depth across cloud identity, data 
 ```text
 antigravity-workshop-retail/
 ├── README.md / README.es.md                  # Bilingual Workshop Guides (EN/ES)
-├── INSTRUCTOR_DEMO_GUIDE.md / .es.md         # Bilingual Step-by-Step Instructor Demo Scripts
 ├── install.sh / install.ps1                  # Cross-platform environment & DB bootstrapper
 ├── Dockerfile / .dockerignore                # Production Cloud Run container definition
 ├── requirements.txt / pyproject.toml         # Python dependencies (including google-adk & mcp)

@@ -3,7 +3,7 @@
   <h1>Retail Pulse — Taller Práctico de Google Antigravity</h1>
   <p><strong>Plataforma de Inteligencia Omnicanal de Órdenes, Sincronización de Inventario, Margen Comercial y Contratos de Proveedores</strong></p>
   <p><em>Impartido por <strong>Tryolabs</strong> | Taller Empresarial de 4 Horas para Retail y Comercio Omnicanal</em></p>
-  <p><a href="README.md"><strong>English</strong></a> | <a href="README.es.md"><strong>Español</strong></a> | <a href="INSTRUCTOR_DEMO_GUIDE.md"><strong>Instructor Demo Guide (EN)</strong></a> | <a href="INSTRUCTOR_DEMO_GUIDE.es.md"><strong>Guía del Instructor (ES)</strong></a></p>
+  <p><a href="README.md"><strong>English</strong></a> | <a href="README.es.md"><strong>Español</strong></a></p>
 </div>
 
 ---
@@ -59,12 +59,12 @@ Este repositorio soporta **tanto a Ingenieros Técnicos como a Líderes Comercia
 
 | Módulo | Duración | Área de Enfoque y Capacidades de Antigravity | Guía del Lab y Playbook de Prompts | Scripts de Automatización |
 | :--- | :--- | :--- | :--- | :--- |
-| **Setup y Briefing** | `00:00 - 00:30` | Configuración del entorno, tour por el Retail Pulse Command Center, vista general de Antigravity IDE + Agent Manager | [Guía del Instructor (ES)](INSTRUCTOR_DEMO_GUIDE.es.md) / [EN](INSTRUCTOR_DEMO_GUIDE.md) | `./install.sh` (o `./install.ps1`) |
+| **Setup y Briefing** | `00:00 - 00:30` | Configuración del entorno, tour por el Retail Pulse Command Center, vista general de Antigravity IDE + Agent Manager | [Instrucciones de Inicio Rápido](#4-instrucciones-de-inicio-rápido) | `./install.sh` (o `./install.ps1`) |
 | **Lab 01** | `00:30 - 01:15` | **Triage Omnicanal en Flash-Sale**: Menciones `@`, `/plan`, Edición en Línea (`Cmd+I`), corrección de Apilamiento Promocional (Bug #1A) e Inventario Fantasma True ATP (Bug #1B) | [Guía Lab 01 (ES)](labs/lab-01-margin-inventory-triage/README.es.md) \| [EN](labs/lab-01-margin-inventory-triage/README.md)<br>[Prompts (ES)](labs/lab-01-margin-inventory-triage/PROMPTS.es.md) \| [EN](labs/lab-01-margin-inventory-triage/PROMPTS.md) | `labs/lab-01-margin-inventory-triage/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
 | **Lab 02** | `01:15 - 02:00` | **Personalizaciones (`GEMINI.md`, Rules y Skills)**: Codificación de GS1 GTIN-14, piso de margen del 15% y estándares OTIF en `.agents/rules/retail-standards.md` y creación de `.agents/skills/margin-otif-audit/SKILL.md` | [Guía Lab 02 (ES)](labs/lab-02-rules-and-skills/README.es.md) \| [EN](labs/lab-02-rules-and-skills/README.md)<br>[Prompts (ES)](labs/lab-02-rules-and-skills/PROMPTS.es.md) \| [EN](labs/lab-02-rules-and-skills/PROMPTS.md) | `labs/lab-02-rules-and-skills/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
 | **Lab 03** | `02:00 - 02:55` | **Servidor FastMCP, Hooks Deterministas y Gobernanza Empresarial**: Construcción de `mcp_server/retail_mcp.py`, `.agents/mcp_config.json`, hook `PreToolUse` (`scripts/margin_guard_hook.py`) y Seguridad en Gemini Enterprise / Google Cloud | [Guía Lab 03 (ES)](labs/lab-03-mcp-and-hooks/README.es.md) \| [EN](labs/lab-03-mcp-and-hooks/README.md)<br>[Prompts (ES)](labs/lab-03-mcp-and-hooks/PROMPTS.es.md) \| [EN](labs/lab-03-mcp-and-hooks/PROMPTS.md) | `labs/lab-03-mcp-and-hooks/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
 | **Lab 04** | `02:55 - 03:45` | **Capstone Multi-Agente (Google ADK, A2A, `adk web`, Cloud Run y Gemini Enterprise)**: Enrutamiento Omnicanal (`fulfillment_router.py`), Orquestador ADK + A2A (`adk_a2a_orchestrator.py`), pruebas con `adk web` y despliegue Terraform a Cloud Run y Gemini Enterprise | [Guía Lab 04 (ES)](labs/lab-04-multi-agent-capstone/README.es.md) \| [EN](labs/lab-04-multi-agent-capstone/README.md)<br>[Prompts (ES)](labs/lab-04-multi-agent-capstone/PROMPTS.es.md) \| [EN](labs/lab-04-multi-agent-capstone/PROMPTS.md) | `labs/lab-04-multi-agent-capstone/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Cierre** | `03:45 - 04:00` | Patrones de despliegue en producción y Q&A con arquitectos de Tryolabs | [Guía del Instructor (ES)](INSTRUCTOR_DEMO_GUIDE.es.md) | `./labs/lab-04-multi-agent-capstone/verify.sh` |
+| **Cierre** | `03:45 - 04:00` | Patrones de despliegue en producción y Q&A con arquitectos de Tryolabs | [Guía Lab 04 (ES)](labs/lab-04-multi-agent-capstone/README.es.md) | `./labs/lab-04-multi-agent-capstone/verify.sh` |
 
 ---
 
