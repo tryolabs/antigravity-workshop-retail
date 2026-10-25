@@ -43,6 +43,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
     .badge {
       font-size: 0.75rem;
@@ -56,6 +57,28 @@
     .badge-ok { background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.35); }
     .badge-warn { background: rgba(245, 158, 11, 0.15); color: var(--warn); border: 1px solid rgba(245, 158, 11, 0.35); }
     .badge-err { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.35); }
+    .lang-switch {
+      display: inline-flex;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+    .lang-btn {
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .lang-btn.active {
+      background: var(--accent);
+      color: #0b0f19;
+    }
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -101,6 +124,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
     table {
       width: 100%;
@@ -165,38 +190,42 @@
       <img src="/static/tryolabs-logo.png" alt="Tryolabs Logo" style="height: 42px; width: auto; border-radius: 6px; background: rgba(255,255,255,0.92); padding: 4px 8px;" />
       <div>
         <h1>
-          Retail Pulse Command Center
-          <span class="badge badge-info">Delivered by Tryolabs</span>
-          <span class="badge badge-ok">Gemini Enterprise &amp; Antigravity</span>
+          <span id="hdrTitleText">Retail Pulse Command Center</span>
+          <span class="badge badge-info" id="hdrBadgeTryo">Delivered by Tryolabs</span>
+          <span class="badge badge-ok" id="hdrBadgeGemini">Gemini Enterprise &amp; Antigravity</span>
         </h1>
-        <p style="color: var(--muted); font-size: 0.88rem; margin-top: 4px;">
+        <p id="hdrSubtitle" style="color: var(--muted); font-size: 0.88rem; margin-top: 4px;">
           Omnichannel Order, WMS/POS Webhook Sync &amp; Commercial Margin / Vendor OTIF Intelligence Platform
         </p>
       </div>
     </div>
     <div style="display: flex; gap: 10px; align-items: center;">
+      <div class="lang-switch" title="Switch Language / Cambiar Idioma">
+        <button id="lang-en" class="lang-btn active" onclick="setLanguage('en')">EN</button>
+        <button id="lang-es" class="lang-btn" onclick="setLanguage('es')">ES</button>
+      </div>
       <button id="refreshBtn" onclick="loadDashboard()">Refresh Telemetry</button>
     </div>
   </header>
 
   <section class="kpi-grid">
     <div class="card">
-      <h3>1. Promo Margin Floor Guard (Lab 1A)</h3>
+      <h3 id="kpi1Title">1. Promo Margin Floor Guard (Lab 1A)</h3>
       <div class="metric" id="kpiMarginMetric">Loading...</div>
       <div class="sub" id="kpiMarginSub">Evaluating 30 MARGIN_HOLD orders...</div>
     </div>
     <div class="card">
-      <h3>2. True ATP &amp; VIP Oversell Radar (Lab 1B)</h3>
+      <h3 id="kpi2Title">2. True ATP &amp; VIP Oversell Radar (Lab 1B)</h3>
       <div class="metric" id="kpiAtpMetric">Loading...</div>
       <div class="sub" id="kpiAtpSub">Auditing POS webhook drift vs WMS stock...</div>
     </div>
     <div class="card">
-      <h3>3. Vendor OTIF Recoverable Chargebacks (Lab 2/3)</h3>
+      <h3 id="kpi3Title">3. Vendor OTIF Recoverable Chargebacks (Lab 2/3)</h3>
       <div class="metric" id="kpiOtifMetric">Loading...</div>
       <div class="sub" id="kpiOtifSub">Cross-referencing EDI 856 ASN logs...</div>
     </div>
     <div class="card">
-      <h3>4. Omnichannel Split-Fulfillment Router (Lab 4)</h3>
+      <h3 id="kpi4Title">4. Omnichannel Split-Fulfillment Router (Lab 4)</h3>
       <div class="metric" id="kpiRouterMetric">Loading...</div>
       <div class="sub" id="kpiRouterSub">Checking DIAMOND/GOLD rerouting status...</div>
     </div>
@@ -204,20 +233,20 @@
 
   <section class="card" style="margin-bottom: 24px;">
     <h2>
-      <span>Interactive Promo Stack &amp; Contract Margin Floor Simulator</span>
+      <span id="simTitle">Interactive Promo Stack &amp; Contract Margin Floor Simulator</span>
       <span class="badge badge-info">POST /api/v1/pricing/evaluate</span>
     </h2>
     <div class="sim-bar">
       <label>
-        SKU
+        <span id="lblSku">SKU</span>
         <input id="simSku" value="SKU-SONY-OLED65" />
       </label>
       <label>
-        Quantity
+        <span id="lblQty">Quantity</span>
         <input id="simQty" type="number" value="2" min="1" style="width: 90px;" />
       </label>
       <label>
-        Promo Codes (Comma-separated)
+        <span id="lblPromos">Promo Codes (Comma-separated)</span>
         <input id="simPromos" value="VIP25,FLASH20,EMP30" style="width: 240px;" />
       </label>
       <button id="runSimBtn" onclick="runPromoSim()">Evaluate Margin Floor</button>
@@ -228,12 +257,12 @@
   <div class="section-grid">
     <div class="card">
       <h2>
-        <span>WMS Inventory vs. POS Webhook Drift (True ATP)</span>
+        <span id="tblInvTitle">WMS Inventory vs. POS Webhook Drift (True ATP)</span>
         <span class="badge badge-warn">GS1 GTIN-14 + RFID</span>
       </h2>
       <table>
         <thead>
-          <tr>
+          <tr id="invTableHead">
             <th>Location</th>
             <th>SKU</th>
             <th>On Hand</th>
@@ -250,12 +279,12 @@
 
     <div class="card">
       <h2>
-        <span>Supplier Commercial OTIF Contracts &amp; EDI 856 Chargebacks</span>
-        <span class="badge badge-err">OTIF Audit</span>
+        <span id="tblVndTitle">Supplier Commercial OTIF Contracts &amp; EDI 856 Chargebacks</span>
+        <span class="badge badge-err" id="badgeOtifAudit">OTIF Audit</span>
       </h2>
       <table>
         <thead>
-          <tr>
+          <tr id="vndTableHead">
             <th>Contract</th>
             <th>Vendor</th>
             <th>Target %</th>
@@ -273,9 +302,156 @@
   <script>
     const fmtUsd = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n || 0);
 
-    async function loadDashboard() {
-      const res = await fetch('/api/v1/dashboard/summary');
-      const data = await res.json();
+    const I18N = {
+      en: {
+        pageTitle: "Retail Pulse | Omnichannel Order, Inventory Sync & Commercial Margin Command Center",
+        hdrTitleText: "Retail Pulse Command Center",
+        hdrBadgeTryo: "Delivered by Tryolabs",
+        hdrBadgeGemini: "Gemini Enterprise & Antigravity",
+        hdrSubtitle: "Omnichannel Order, WMS/POS Webhook Sync & Commercial Margin / Vendor OTIF Intelligence Platform",
+        refreshBtn: "Refresh Telemetry",
+        loading: "Loading...",
+        kpi1Title: "1. Promo Margin Floor Guard (Lab 1A)",
+        kpi1SubLoading: "Evaluating 30 MARGIN_HOLD orders...",
+        kpi1Protected: (leakage, count) => `<span class="badge badge-ok">PROTECTED</span> Eliminated ${leakage} negative margin bleed across ${count} orders`,
+        kpi1Bug: (leakage) => `<span class="badge badge-err">BUG #1A ACTIVE</span> Unclamped promo stacking bleeding ${leakage} below wholesale cost!`,
+        kpi2Title: "2. True ATP & VIP Oversell Radar (Lab 1B)",
+        kpi2SubLoading: "Auditing POS webhook drift vs WMS stock...",
+        kpi2Detected: (det, tot) => `${det} / ${tot} Detected`,
+        kpi2ActiveSub: (ltv) => `<span class="badge badge-ok">TRUE ATP ACTIVE</span> Flagged ${ltv} in VIP Customer LTV before oversell`,
+        kpi2BugSub: `<span class="badge badge-err">BUG #1B ACTIVE</span> Naive ATP ignores reserved stock, safety buffer &amp; POS webhook lag!`,
+        kpi3Title: "3. Vendor OTIF Recoverable Chargebacks (Lab 2/3)",
+        kpi3SubLoading: "Cross-referencing EDI 856 ASN logs...",
+        kpi3Sub: (breach, total, delayed) => `${breach} / ${total} Suppliers Breaching OTIF (${delayed} delayed POs)`,
+        kpi4Title: "4. Omnichannel Split-Fulfillment Router (Lab 4)",
+        kpi4SubLoading: "Checking DIAMOND/GOLD rerouting status...",
+        kpi4Rerouted: (cnt) => `${cnt} Rerouted`,
+        kpi4ActiveSub: (ltv, margin) => `<span class="badge badge-ok">LAB 4 ACTIVE</span> Protected ${ltv} VIP LTV (${margin} net margin)`,
+        kpi4PendingMetric: "Stubbed (0 Rerouted)",
+        kpi4PendingSub: `<span class="badge badge-warn">LAB 4 PENDING</span> Complete src/services/fulfillment_router.py in Lab 4`,
+        simTitle: "Interactive Promo Stack & Contract Margin Floor Simulator",
+        lblSku: "SKU",
+        lblQty: "Quantity",
+        lblPromos: "Promo Codes (Comma-separated)",
+        runSimBtn: "Evaluate Margin Floor",
+        simOutputPlaceholder: 'Click "Evaluate Margin Floor" to inspect PromoEvaluationResult...',
+        tblInvTitle: "WMS Inventory vs. POS Webhook Drift (True ATP)",
+        invHeaders: ["Location", "SKU", "On Hand", "Reserved", "Safety", "POS Lag &Delta;", "True ATP", "Risk"],
+        riskStockout: "STOCKOUT RISK",
+        riskHealthy: "HEALTHY",
+        tblVndTitle: "Supplier Commercial OTIF Contracts & EDI 856 Chargebacks",
+        badgeOtifAudit: "OTIF Audit",
+        vndHeaders: ["Contract", "Vendor", "Target %", "Actual %", "Delayed PO $", "Penalty $", "Status"],
+        statusBreachHold: "BREACH HOLD",
+        statusCompliant: "COMPLIANT"
+      },
+      es: {
+        pageTitle: "Retail Pulse | Centro de Comando Omnicanal de Órdenes, Sincronización de Inventario y Margen Comercial",
+        hdrTitleText: "Centro de Comando Retail Pulse",
+        hdrBadgeTryo: "Desarrollado por Tryolabs",
+        hdrBadgeGemini: "Gemini Enterprise y Antigravity",
+        hdrSubtitle: "Plataforma de Inteligencia de Órdenes Omnicanal, Sincronización Webhook WMS/POS, Margen Comercial y OTIF de Proveedores",
+        refreshBtn: "Actualizar Telemetría",
+        loading: "Cargando...",
+        kpi1Title: "1. Protección de Piso de Margen Promocional (Lab 1A)",
+        kpi1SubLoading: "Evaluando 30 órdenes en MARGIN_HOLD...",
+        kpi1Protected: (leakage, count) => `<span class="badge badge-ok">PROTEGIDO</span> Eliminada fuga de margen negativo de ${leakage} en ${count} órdenes`,
+        kpi1Bug: (leakage) => `<span class="badge badge-err">BUG #1A ACTIVO</span> ¡Acumulación promocional sin límite perdiendo ${leakage} por debajo del costo mayorista!`,
+        kpi2Title: "2. Radar de True ATP y Sobreventa VIP (Lab 1B)",
+        kpi2SubLoading: "Auditando desfase de webhooks POS vs stock WMS...",
+        kpi2Detected: (det, tot) => `${det} / ${tot} Detectadas`,
+        kpi2ActiveSub: (ltv) => `<span class="badge badge-ok">TRUE ATP ACTIVO</span> Detectados ${ltv} en LTV de Clientes VIP antes de sobreventa`,
+        kpi2BugSub: `<span class="badge badge-err">BUG #1B ACTIVO</span> ¡El ATP ingenuo ignora el stock reservado, el stock de seguridad y el desfase de webhooks POS!`,
+        kpi3Title: "3. Penalizaciones OTIF Recuperables de Proveedores (Lab 2/3)",
+        kpi3SubLoading: "Cruzando registros EDI 856 ASN...",
+        kpi3Sub: (breach, total, delayed) => `${breach} / ${total} Proveedores Incumpliendo OTIF (${delayed} en OCs retrasadas)`,
+        kpi4Title: "4. Enrutador Omnicanal de Despacho Dividido (Lab 4)",
+        kpi4SubLoading: "Verificando estado de reenrutamiento DIAMOND/GOLD...",
+        kpi4Rerouted: (cnt) => `${cnt} Reenrutadas`,
+        kpi4ActiveSub: (ltv, margin) => `<span class="badge badge-ok">LAB 4 ACTIVO</span> Protegidos ${ltv} de LTV VIP (${margin} de margen neto)`,
+        kpi4PendingMetric: "Pendiente (0 Reenrutadas)",
+        kpi4PendingSub: `<span class="badge badge-warn">LAB 4 PENDIENTE</span> Completa src/services/fulfillment_router.py en el Lab 4`,
+        simTitle: "Simulador Interactivo de Acumulación de Promociones y Piso de Margen Contractual",
+        lblSku: "SKU",
+        lblQty: "Cantidad",
+        lblPromos: "Códigos Promocionales (Separados por coma)",
+        runSimBtn: "Evaluar Piso de Margen",
+        simOutputPlaceholder: 'Haz clic en "Evaluar Piso de Margen" para inspeccionar PromoEvaluationResult...',
+        tblInvTitle: "Inventario WMS vs. Desfase de Webhooks POS (True ATP)",
+        invHeaders: ["Ubicación", "SKU", "En Mano", "Reservado", "Seguridad", "Desfase POS &Delta;", "True ATP", "Riesgo"],
+        riskStockout: "RIESGO DE QUIEBRE",
+        riskHealthy: "SALUDABLE",
+        tblVndTitle: "Contratos Comerciales OTIF de Proveedores y Penalizaciones EDI 856",
+        badgeOtifAudit: "Auditoría OTIF",
+        vndHeaders: ["Contrato", "Proveedor", "Meta %", "Real %", "OC Retrasada $", "Penalización $", "Estado"],
+        statusBreachHold: "RETENCIÓN POR INCUMPLIMIENTO",
+        statusCompliant: "EN CUMPLIMIENTO"
+      }
+    };
+
+    function detectInitialLang() {
+      const params = new URLSearchParams(window.location.search);
+      const qLang = (params.get('lang') || '').toLowerCase();
+      if (qLang === 'es' || qLang === 'en') return qLang;
+      if (window.location.pathname.endsWith('/es') || window.location.pathname.endsWith('index.es.html')) return 'es';
+      const saved = localStorage.getItem('workshop_lang');
+      if (saved === 'es' || saved === 'en') return saved;
+      if ((navigator.language || '').toLowerCase().startsWith('es')) return 'es';
+      return 'en';
+    }
+
+    let currentLang = detectInitialLang();
+    let cachedDashboardData = null;
+
+    function setLanguage(lang) {
+      currentLang = (lang === 'es') ? 'es' : 'en';
+      localStorage.setItem('workshop_lang', currentLang);
+      document.documentElement.lang = currentLang;
+
+      document.getElementById('lang-en').classList.toggle('active', currentLang === 'en');
+      document.getElementById('lang-es').classList.toggle('active', currentLang === 'es');
+
+      const t = I18N[currentLang];
+      document.title = t.pageTitle;
+      document.getElementById('hdrTitleText').textContent = t.hdrTitleText;
+      document.getElementById('hdrBadgeTryo').textContent = t.hdrBadgeTryo;
+      document.getElementById('hdrBadgeGemini').textContent = t.hdrBadgeGemini;
+      document.getElementById('hdrSubtitle').textContent = t.hdrSubtitle;
+      document.getElementById('refreshBtn').textContent = t.refreshBtn;
+
+      document.getElementById('kpi1Title').textContent = t.kpi1Title;
+      document.getElementById('kpi2Title').textContent = t.kpi2Title;
+      document.getElementById('kpi3Title').textContent = t.kpi3Title;
+      document.getElementById('kpi4Title').textContent = t.kpi4Title;
+
+      document.getElementById('simTitle').textContent = t.simTitle;
+      document.getElementById('lblSku').textContent = t.lblSku;
+      document.getElementById('lblQty').textContent = t.lblQty;
+      document.getElementById('lblPromos').textContent = t.lblPromos;
+      document.getElementById('runSimBtn').textContent = t.runSimBtn;
+
+      document.getElementById('tblInvTitle').textContent = t.tblInvTitle;
+      document.getElementById('invTableHead').innerHTML = t.invHeaders.map(h => `<th>${h}</th>`).join('');
+      document.getElementById('tblVndTitle').textContent = t.tblVndTitle;
+      document.getElementById('badgeOtifAudit').textContent = t.badgeOtifAudit;
+      document.getElementById('vndTableHead').innerHTML = t.vndHeaders.map(h => `<th>${h}</th>`).join('');
+
+      if (cachedDashboardData) {
+        renderDashboard(cachedDashboardData);
+      } else {
+        document.getElementById('kpiMarginMetric').textContent = t.loading;
+        document.getElementById('kpiMarginSub').textContent = t.kpi1SubLoading;
+        document.getElementById('kpiAtpMetric').textContent = t.loading;
+        document.getElementById('kpiAtpSub').textContent = t.kpi2SubLoading;
+        document.getElementById('kpiOtifMetric').textContent = t.loading;
+        document.getElementById('kpiOtifSub').textContent = t.kpi3SubLoading;
+        document.getElementById('kpiRouterMetric').textContent = t.loading;
+        document.getElementById('kpiRouterSub').textContent = t.kpi4SubLoading;
+      }
+    }
+
+    function renderDashboard(data) {
+      const t = I18N[currentLang];
 
       // 1. Margin KPI
       const ma = data.margin_audit;
@@ -283,10 +459,10 @@
       const marginSub = document.getElementById('kpiMarginSub');
       if (ma.all_orders_margin_compliant) {
         marginEl.innerHTML = `<span style="color: var(--success)">+${fmtUsd(ma.recalculated_total_margin_usd)}</span>`;
-        marginSub.innerHTML = `<span class="badge badge-ok">PROTECTED</span> Eliminated ${fmtUsd(ma.legacy_negative_margin_leakage_usd)} negative margin bleed across ${ma.margin_hold_orders_count} orders`;
+        marginSub.innerHTML = t.kpi1Protected(fmtUsd(ma.legacy_negative_margin_leakage_usd), ma.margin_hold_orders_count);
       } else {
         marginEl.innerHTML = `<span style="color: var(--danger)">${fmtUsd(ma.recalculated_total_margin_usd)}</span>`;
-        marginSub.innerHTML = `<span class="badge badge-err">BUG #1A ACTIVE</span> Unclamped promo stacking bleeding ${fmtUsd(ma.legacy_negative_margin_leakage_usd)} below wholesale cost!`;
+        marginSub.innerHTML = t.kpi1Bug(fmtUsd(ma.legacy_negative_margin_leakage_usd));
       }
 
       // 2. ATP KPI
@@ -294,28 +470,32 @@
       const atpEl = document.getElementById('kpiAtpMetric');
       const atpSub = document.getElementById('kpiAtpSub');
       if (va.detected_oversell_orders_count > 0) {
-        atpEl.innerHTML = `<span style="color: var(--accent)">${va.detected_oversell_orders_count} / ${va.at_risk_orders_total} Detected</span>`;
-        atpSub.innerHTML = `<span class="badge badge-ok">TRUE ATP ACTIVE</span> Flagged ${fmtUsd(va.exposed_customer_ltv_usd)} in VIP Customer LTV before oversell`;
+        atpEl.innerHTML = `<span style="color: var(--accent)">${t.kpi2Detected(va.detected_oversell_orders_count, va.at_risk_orders_total)}</span>`;
+        atpSub.innerHTML = t.kpi2ActiveSub(fmtUsd(va.exposed_customer_ltv_usd));
       } else {
-        atpEl.innerHTML = `<span style="color: var(--warn)">0 / ${va.at_risk_orders_total} Detected</span>`;
-        atpSub.innerHTML = `<span class="badge badge-err">BUG #1B ACTIVE</span> Naive ATP ignores reserved stock, safety buffer &amp; POS webhook lag!`;
+        atpEl.innerHTML = `<span style="color: var(--warn)">${t.kpi2Detected(0, va.at_risk_orders_total)}</span>`;
+        atpSub.innerHTML = t.kpi2BugSub;
       }
 
       // 3. Vendor OTIF KPI
       const vnd = data.vendor_audit;
       document.getElementById('kpiOtifMetric').innerHTML = `<span style="color: var(--warn)">${fmtUsd(vnd.total_recoverable_chargeback_usd)}</span>`;
-      document.getElementById('kpiOtifSub').innerHTML = `${vnd.breaching_contracts_count} / ${vnd.evaluated_contracts_count} Suppliers Breaching OTIF (${fmtUsd(vnd.total_delayed_po_value_usd)} delayed POs)`;
+      document.getElementById('kpiOtifSub').innerHTML = t.kpi3Sub(
+        vnd.breaching_contracts_count,
+        vnd.evaluated_contracts_count,
+        fmtUsd(vnd.total_delayed_po_value_usd)
+      );
 
       // 4. Router KPI
       const rt = data.routing_simulation;
       const rtEl = document.getElementById('kpiRouterMetric');
       const rtSub = document.getElementById('kpiRouterSub');
       if (rt.status === 'OPTIMIZED' && rt.rerouted_orders_count > 0) {
-        rtEl.innerHTML = `<span style="color: var(--success)">${rt.rerouted_orders_count} Rerouted</span>`;
-        rtSub.innerHTML = `<span class="badge badge-ok">LAB 4 ACTIVE</span> Protected ${fmtUsd(rt.protected_customer_ltv_usd)} VIP LTV (${fmtUsd(rt.total_post_shipping_margin_usd)} net margin)`;
+        rtEl.innerHTML = `<span style="color: var(--success)">${t.kpi4Rerouted(rt.rerouted_orders_count)}</span>`;
+        rtSub.innerHTML = t.kpi4ActiveSub(fmtUsd(rt.protected_customer_ltv_usd), fmtUsd(rt.total_post_shipping_margin_usd));
       } else {
-        rtEl.innerHTML = `<span style="color: var(--muted)">Stubbed (0 Rerouted)</span>`;
-        rtSub.innerHTML = `<span class="badge badge-warn">LAB 4 PENDING</span> Complete src/services/fulfillment_router.py in Lab 4`;
+        rtEl.innerHTML = `<span style="color: var(--muted)">${t.kpi4PendingMetric}</span>`;
+        rtSub.innerHTML = t.kpi4PendingSub;
       }
 
       // Populate Inventory Table
@@ -329,7 +509,7 @@
           <td>${row.safety_stock_qty}</td>
           <td style="color: ${row.unprocessed_webhook_delta_qty > 0 ? 'var(--warn)' : 'var(--muted)'}">-${row.unprocessed_webhook_delta_qty}</td>
           <td><strong>${row.true_atp_qty}</strong></td>
-          <td>${row.oversell_risk ? '<span class="badge badge-err">STOCKOUT RISK</span>' : '<span class="badge badge-ok">HEALTHY</span>'}</td>
+          <td>${row.oversell_risk ? `<span class="badge badge-err">${t.riskStockout}</span>` : `<span class="badge badge-ok">${t.riskHealthy}</span>`}</td>
         </tr>
       `).join('');
 
@@ -343,9 +523,15 @@
           <td style="color: ${c.status === 'BREACH_HOLD' ? 'var(--danger)' : 'var(--success)'}"><strong>${c.actual_otif_pct}%</strong></td>
           <td>${fmtUsd(c.delayed_po_value_usd)}</td>
           <td><strong>${fmtUsd(c.recoverable_chargeback_usd)}</strong></td>
-          <td>${c.status === 'BREACH_HOLD' ? '<span class="badge badge-err">BREACH HOLD</span>' : '<span class="badge badge-ok">COMPLIANT</span>'}</td>
+          <td>${c.status === 'BREACH_HOLD' ? `<span class="badge badge-err">${t.statusBreachHold}</span>` : `<span class="badge badge-ok">${t.statusCompliant}</span>`}</td>
         </tr>
       `).join('');
+    }
+
+    async function loadDashboard() {
+      const res = await fetch('/api/v1/dashboard/summary');
+      cachedDashboardData = await res.json();
+      renderDashboard(cachedDashboardData);
     }
 
     async function runPromoSim() {
@@ -361,6 +547,7 @@
       document.getElementById('simOutput').textContent = JSON.stringify(json, null, 2);
     }
 
+    setLanguage(currentLang);
     loadDashboard();
     runPromoSim();
   </script>

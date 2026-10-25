@@ -89,7 +89,7 @@ Run the root installer to create the `.venv` virtual environment, install depend
 ```
 
 ### 2. Launch the Live Retail Pulse Command Center
-Start the FastAPI server and open `http://127.0.0.1:8002` in your browser:
+Start the FastAPI server and open `http://127.0.0.1:8002` (English) or `http://127.0.0.1:8002/es` (Spanish — or use the **`EN | ES`** toggle in the top-right header) in your browser:
 
 ```bash
 .venv/bin/uvicorn src.main:app --reload --port 8002

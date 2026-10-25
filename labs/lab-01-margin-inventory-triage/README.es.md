@@ -44,7 +44,7 @@ Opcional — inicia el Dashboard Web Omnicanal en vivo en una segunda terminal:
 ```bash
 ./.venv/bin/uvicorn src.main:app --reload --port 8002
 ```
-Abre `http://localhost:8002` para observar las alertas rojas `BUG #1A ACTIVE` y `BUG #1B ACTIVE`.
+Abre `http://localhost:8002/es` (o usa el selector **`EN | ES`** en la esquina superior derecha) para observar las alertas rojas `BUG #1A ACTIVO` y `BUG #1B ACTIVO`.
 
 ---
 

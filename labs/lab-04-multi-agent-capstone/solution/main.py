@@ -70,12 +70,25 @@ class ClaimChargebacksRequest(BaseModel):
 
 
 @app.get("/", response_class=HTMLResponse)
-def serve_dashboard() -> Any:
+def serve_dashboard(lang: str | None = Query(default=None, description="UI language: en or es")) -> Any:
     """Serve the Live Omnichannel Command Center & Commercial Margin Web Dashboard."""
+    if lang and lang.lower() == "es":
+        es_file = STATIC_DIR / "index.es.html"
+        if es_file.exists():
+            return FileResponse(str(es_file))
     index_file = STATIC_DIR / "index.html"
     if not index_file.exists():
         return HTMLResponse("<h1>Retail Pulse Dashboard not found</h1>", status_code=404)
     return FileResponse(str(index_file))
+
+
+@app.get("/es", response_class=HTMLResponse)
+def serve_dashboard_es() -> Any:
+    """Serve the Spanish Live Omnichannel Command Center & Commercial Margin Web Dashboard."""
+    es_file = STATIC_DIR / "index.es.html"
+    if es_file.exists():
+        return FileResponse(str(es_file))
+    return serve_dashboard(lang="es")
 
 
 @app.get("/api/v1/health")

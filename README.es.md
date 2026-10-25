@@ -89,7 +89,7 @@ Ejecuta el instalador raíz para crear el entorno virtual `.venv`, instalar depe
 ```
 
 ### 2. Iniciar el Retail Pulse Command Center en Vivo
-Inicia el servidor FastAPI y abre `http://127.0.0.1:8002` en tu navegador:
+Inicia el servidor FastAPI y abre `http://127.0.0.1:8002/es` (en español, o `http://127.0.0.1:8002` usando el selector **`EN | ES`** en la esquina superior derecha) en tu navegador:
 
 ```bash
 .venv/bin/uvicorn src.main:app --reload --port 8002

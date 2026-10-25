@@ -44,7 +44,7 @@ Optional — launch the Live Omnichannel Command Center Dashboard in a second te
 ```bash
 ./.venv/bin/uvicorn src.main:app --reload --port 8002
 ```
-Open `http://localhost:8002` to observe the red `BUG #1A ACTIVE` and `BUG #1B ACTIVE` KPI banners.
+Open `http://localhost:8002` (or `http://localhost:8002/es` / the **`EN | ES`** toggle in the top-right header) to observe the red `BUG #1A ACTIVE` and `BUG #1B ACTIVE` KPI banners.
 
 ---
 

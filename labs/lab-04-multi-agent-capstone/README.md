@@ -145,7 +145,7 @@ Google ADK includes a built-in interactive web UI (`adk web`) for inspecting mul
    ```bash
    ./.venv/bin/uvicorn src.main:app --host 127.0.0.1 --port 8002
    ```
-   Open `http://localhost:8002` and `http://localhost:8002/.well-known/agent.json` to inspect the live dashboard and A2A Agent Card.
+   Open `http://localhost:8002` (or `http://localhost:8002/es` / the **`EN | ES`** toggle in the top-right header) and `http://localhost:8002/.well-known/agent.json` to inspect the live dashboard and A2A Agent Card.
 
 ---
 
