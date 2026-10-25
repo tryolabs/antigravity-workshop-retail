@@ -6,6 +6,8 @@
 
 **Duración**: 45 Minutos | **Perfil**: Track Técnico y Comercial | **Prerrequisitos**: Labs 01, 02 y 03 Completados
 
+> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES](./LAB_04_INSTRUCTIONS_ES.pdf) | [EN](./LAB_04_INSTRUCTIONS_EN.pdf)
+
 ---
 
 ## 1. Escenario Retail y Contexto de Negocio
@@ -137,8 +139,8 @@ Google ADK incluye una interfaz web interactiva (`adk web`) para inspeccionar ll
    ./scripts/run_adk_web.sh --port 8080
    ```
 3. Abre `http://127.0.0.1:8080` en tu navegador (o mediante `/browser`), selecciona el agente **`retail_pulse`** en el menú superior izquierdo y prueba prompts como:
-   - *"Run a full omnichannel triage across WMS True ATP routing, 15% promotional margin floors, and vendor OTIF chargebacks."*
-   - *"Check the True ATP across all nodes for SKU-OLED-65 and explain the VIP oversell risk."*
+   - *"Ejecuta un triaje omnicanal completo abarcando el enrutamiento True ATP en WMS, los pisos de margen promocional del 15% y los chargebacks OTIF de proveedores."*
+   - *"Consulta el True ATP en todos los nodos para SKU-OLED-65 y explica el riesgo de sobreventa VIP."*
 4. Inicia el **Retail Pulse FastAPI Command Center** en el puerto `8002`:
    ```bash
    ./.venv/bin/uvicorn src.main:app --host 127.0.0.1 --port 8002

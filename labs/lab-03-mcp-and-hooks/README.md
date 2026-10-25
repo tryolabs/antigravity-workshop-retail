@@ -6,6 +6,8 @@
 
 **Duration**: 45 Minutes | **Persona**: Technical & Commercial Track | **Prerequisites**: Lab 02 Completed
 
+> **Language / Idioma:** [English](./README.md) | [Español](./README.es.md) • **Prompt Playbook:** [PROMPTS.md](./PROMPTS.md) | [PROMPTS.es.md](./PROMPTS.es.md) • **PDF:** [EN](./LAB_03_INSTRUCTIONS_EN.pdf) | [ES](./LAB_03_INSTRUCTIONS_ES.pdf)
+
 ---
 
 ## 1. Retail Scenario & Business Context

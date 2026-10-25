@@ -6,7 +6,7 @@
 
 **Impartido por Tryolabs • Potenciado por Google Antigravity y Gemini Enterprise**
 
-> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md)
+> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES](./LAB_01_INSTRUCTIONS_ES.pdf) | [EN](./LAB_01_INSTRUCTIONS_EN.pdf)
 
 ---
 
@@ -27,7 +27,7 @@ Durante nuestro evento flash omnicanal de fin de semana, **Retail Pulse** sufri�
 
 ## 2. Inicialización del Laboratorio
 
-Ejecuta el instalador del Laboratorio 01 desde la raíz del repositorio:
+Ejecuta el instalador del Laboratorio 01 desde la raíz del repositorio para inicializar los bugs iniciales y la base de datos SQLite:
 
 ```bash
 ./labs/lab-01-margin-inventory-triage/install.sh
@@ -39,7 +39,7 @@ Verifica que la suite de pruebas falle inicialmente debido a ambos bugs:
 ./.venv/bin/pytest tests/test_lab01_triage.py
 ```
 
-Opcional — inicia el Dashboard Web en vivo en otra terminal:
+Opcional — inicia el Dashboard Web Omnicanal en vivo en una segunda terminal:
 
 ```bash
 ./.venv/bin/uvicorn src.main:app --reload --port 8002
@@ -50,13 +50,28 @@ Abre `http://localhost:8002` para observar las alertas rojas `BUG #1A ACTIVE` y 
 
 ## 3. Resolución Paso a Paso con Google Antigravity
 
-Abre [PROMPTS.es.md](./PROMPTS.es.md) y utiliza la secuencia de prompts optimizados en **Google Antigravity**:
+Abre [PROMPTS.es.md](./PROMPTS.es.md) y pega los prompts en **Google Antigravity** (Chat Lateral, `/plan` o Edición en Línea `Cmd+I`):
 
-1. **Descubrimiento de Causa Raíz (`@` Mentions)**: Analiza `@src/services/promo_pricing.py`, `@src/services/inventory_atp.py`, `@data/logs/pos_wms_webhooks.jsonl` y `@tests/test_lab01_triage.py`.
-2. **Planificación Estructurada (`/plan`)**: Genera un plan que reemplace `float` por `Decimal` (`ROUND_HALF_UP`), valide `gtin_14`, impida apilar promociones `is_stackable == 0`, aplique el piso `contract_min_margin_floor_pct`, y calcule `true_atp_qty = max(0, on_hand_qty - reserved_qty - safety_stock_qty - unprocessed_webhook_delta_qty)`.
-3. **Implementación y Verificación**:
-   ```bash
-   ./labs/lab-01-margin-inventory-triage/verify.sh
-   ```
+### Paso 3.1: Descubrimiento de Causa Raíz con Menciones de Contexto `@`
+Pega el **Prompt de Descubrimiento** de `PROMPTS.es.md` haciendo referencia a `@src/services/promo_pricing.py`, `@src/services/inventory_atp.py`, `@data/logs/pos_wms_webhooks.jsonl` y `@tests/test_lab01_triage.py`.
 
-> **¿Quieres aplicar la solución de referencia?** Ejecuta `./labs/lab-01-margin-inventory-triage/apply_solution.sh`.
+### Paso 3.2: Plan de Remediación Estructurado con `/plan`
+Ejecuta el **Prompt `/plan`** en Antigravity para verificar los requisitos matemáticos y comerciales exactos antes de editar el código:
+- **Corrección #1A (`src/services/promo_pricing.py`)**:
+  - Usa `Decimal` con `ROUND_HALF_UP` (`Decimal("0.01")`) y valida el `gtin_14` del SKU mediante `validate_gs1_gtin14`.
+  - Rechaza códigos promocionales inactivos (`active == 0`) o desconocidos agregándolos a `rejected_promo_codes`.
+  - Nunca combines promociones no acumulables (`is_stackable == 0`). Compara la promoción no acumulable individual más alta contra la composición multiplicativa de promociones acumulables (`is_stackable == 1`), seleccionando la opción que otorgue al cliente el mayor descuento previo al límite de margen.
+  - Aplica el piso de margen efectivo (`max(contract_min_margin_floor_pct, pisos de promociones aplicadas)`): limita `net_revenue_usd` para que `gross_margin_pct >= effective_floor_pct` y establece `margin_floor_clamped = True`.
+- **Corrección #1B (`src/services/inventory_atp.py`)**:
+  - Calcula `raw_atp_qty = on_hand_qty - reserved_qty - safety_stock_qty - unprocessed_webhook_delta_qty`.
+  - Calcula `true_atp_qty = max(0, raw_atp_qty)`.
+  - Marca `oversell_risk = (true_atp_qty < required_qty) or (raw_atp_qty <= 0)`.
+
+### Paso 3.3: Aplicar Correcciones y Verificar
+Permite que Antigravity implemente las correcciones (o usa la edición en línea `Cmd+I` dentro de `src/services/promo_pricing.py` y `src/services/inventory_atp.py`), y luego ejecuta:
+
+```bash
+./labs/lab-01-margin-inventory-triage/verify.sh
+```
+
+> **¿Necesitas consultar o aplicar la solución de referencia?** Ejecuta `./labs/lab-01-margin-inventory-triage/apply_solution.sh` en cualquier momento.

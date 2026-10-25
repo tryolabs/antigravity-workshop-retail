@@ -4,6 +4,8 @@
 
 # Lab 01 — Optimized Antigravity Prompts Playbook (English)
 
+> **Language / Idioma:** [English](./PROMPTS.md) | [Español](./PROMPTS.es.md) • **Lab Guide:** [README.md](./README.md) | [README.es.md](./README.es.md) • **PDF:** [EN](./LAB_01_INSTRUCTIONS_EN.pdf) | [ES](./LAB_01_INSTRUCTIONS_ES.pdf)
+
 Use these copy-pasteable prompts inside **Google Antigravity** (Sidebar Chat, `/plan`, Inline `Cmd+I`, or CLI `agy`) to complete Lab 01.
 
 ---

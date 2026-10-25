@@ -4,6 +4,8 @@
 
 # Playbook de Prompts del Lab 04: Google ADK, Protocolo A2A, Enrutamiento Omnicanal y Despliegue en Gemini Enterprise
 
+> **Idioma / Language:** [Español](./PROMPTS.es.md) | [English](./PROMPTS.md) • **Guía del Lab:** [README.es.md](./README.es.md) | [README.md](./README.md) • **PDF:** [ES](./LAB_04_INSTRUCTIONS_ES.pdf) | [EN](./LAB_04_INSTRUCTIONS_EN.pdf)
+
 Copia y pega estos prompts en **Google Antigravity** mientras completas el Capstone del Lab 04. Cada fase incluye prompts tanto para el **Track Técnico** como para el **Track Comercial / Ejecutivo**.
 
 ---
@@ -47,7 +49,7 @@ Desde una perspectiva de rentabilidad omnicanal retail, analiza por qué separar
 Abre `src/services/fulfillment_router.py`, selecciona `optimize_at_risk_order_routing` y `claim_vendor_otif_chargebacks`, presiona `Cmd+I` (macOS) o `Ctrl+I` (Windows/Linux) e ingresa:
 
 ```text
-Implement `optimize_at_risk_order_routing` using `evaluate_location_atp` to filter candidate nodes with `can_fulfill == True`, compute `post_shipping_margin_usd = round((unit_price - unit_cost) * qty - shipping_cost, 2)`, sort by `(-post_shipping_margin_usd, 0 if location_type == 'DC' else 1, -true_atp)`, and update `omnichannel_orders` (`status='REROUTED_SAVED'`) when `persist_changes=True`. Then implement `claim_vendor_otif_chargebacks` using `audit_all_vendor_otif_contracts(only_breaching=True)` to transition breaching contracts to `status='CHARGEBACK_CLAIMED'`.
+Implementa `optimize_at_risk_order_routing` usando `evaluate_location_atp` para filtrar nodos candidatos con `can_fulfill == True`, calcula `post_shipping_margin_usd = round((unit_price - unit_cost) * qty - shipping_cost, 2)`, ordena por `(-post_shipping_margin_usd, 0 if location_type == 'DC' else 1, -true_atp)` y actualiza `omnichannel_orders` (`status='REROUTED_SAVED'`) cuando `persist_changes=True`. Luego implementa `claim_vendor_otif_chargebacks` usando `audit_all_vendor_otif_contracts(only_breaching=True)` para cambiar el estado de los contratos en incumplimiento a `status='CHARGEBACK_CLAIMED'`.
 ```
 
 ---

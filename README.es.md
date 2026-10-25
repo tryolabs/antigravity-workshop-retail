@@ -60,10 +60,10 @@ Este repositorio soporta **tanto a Ingenieros Técnicos como a Líderes Comercia
 | Módulo | Duración | Área de Enfoque y Capacidades de Antigravity | Guía del Lab y Playbook de Prompts | Scripts de Automatización |
 | :--- | :--- | :--- | :--- | :--- |
 | **Setup y Briefing** | `00:00 - 00:30` | Configuración del entorno, tour por el Retail Pulse Command Center, vista general de Antigravity IDE + Agent Manager | [Instrucciones de Inicio Rápido](#4-instrucciones-de-inicio-rápido) | `./install.sh` (o `./install.ps1`) |
-| **Lab 01** | `00:30 - 01:15` | **Triage Omnicanal en Flash-Sale**: Menciones `@`, `/plan`, Edición en Línea (`Cmd+I`), corrección de Apilamiento Promocional (Bug #1A) e Inventario Fantasma True ATP (Bug #1B) | [Guía Lab 01 (ES)](labs/lab-01-margin-inventory-triage/README.es.md) \| [EN](labs/lab-01-margin-inventory-triage/README.md)<br>[Prompts (ES)](labs/lab-01-margin-inventory-triage/PROMPTS.es.md) \| [EN](labs/lab-01-margin-inventory-triage/PROMPTS.md) | `labs/lab-01-margin-inventory-triage/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Lab 02** | `01:15 - 02:00` | **Personalizaciones (`GEMINI.md`, Rules y Skills)**: Codificación de GS1 GTIN-14, piso de margen del 15% y estándares OTIF en `.agents/rules/retail-standards.md` y creación de `.agents/skills/margin-otif-audit/SKILL.md` | [Guía Lab 02 (ES)](labs/lab-02-rules-and-skills/README.es.md) \| [EN](labs/lab-02-rules-and-skills/README.md)<br>[Prompts (ES)](labs/lab-02-rules-and-skills/PROMPTS.es.md) \| [EN](labs/lab-02-rules-and-skills/PROMPTS.md) | `labs/lab-02-rules-and-skills/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Lab 03** | `02:00 - 02:55` | **Servidor FastMCP, Hooks Deterministas y Gobernanza Empresarial**: Construcción de `mcp_server/retail_mcp.py`, `.agents/mcp_config.json`, hook `PreToolUse` (`scripts/margin_guard_hook.py`) y Seguridad en Gemini Enterprise / Google Cloud | [Guía Lab 03 (ES)](labs/lab-03-mcp-and-hooks/README.es.md) \| [EN](labs/lab-03-mcp-and-hooks/README.md)<br>[Prompts (ES)](labs/lab-03-mcp-and-hooks/PROMPTS.es.md) \| [EN](labs/lab-03-mcp-and-hooks/PROMPTS.md) | `labs/lab-03-mcp-and-hooks/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Lab 04** | `02:55 - 03:45` | **Capstone Multi-Agente (Google ADK, A2A, `adk web`, Cloud Run y Gemini Enterprise)**: Enrutamiento Omnicanal (`fulfillment_router.py`), Orquestador ADK + A2A (`adk_a2a_orchestrator.py`), pruebas con `adk web` y despliegue Terraform a Cloud Run y Gemini Enterprise | [Guía Lab 04 (ES)](labs/lab-04-multi-agent-capstone/README.es.md) \| [EN](labs/lab-04-multi-agent-capstone/README.md)<br>[Prompts (ES)](labs/lab-04-multi-agent-capstone/PROMPTS.es.md) \| [EN](labs/lab-04-multi-agent-capstone/PROMPTS.md) | `labs/lab-04-multi-agent-capstone/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Lab 01** | `00:30 - 01:15` | **Triage Omnicanal en Flash-Sale**: Menciones `@`, `/plan`, Edición en Línea (`Cmd+I`), corrección de Apilamiento Promocional (Bug #1A) e Inventario Fantasma True ATP (Bug #1B) | [Guía Lab 01 (ES)](labs/lab-01-margin-inventory-triage/README.es.md) \| [EN](labs/lab-01-margin-inventory-triage/README.md)<br>[Prompts (ES)](labs/lab-01-margin-inventory-triage/PROMPTS.es.md) \| [EN](labs/lab-01-margin-inventory-triage/PROMPTS.md)<br>[PDF (ES)](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_ES.pdf) \| [EN](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_EN.pdf) | `labs/lab-01-margin-inventory-triage/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Lab 02** | `01:15 - 02:00` | **Personalizaciones (`GEMINI.md`, Rules y Skills)**: Codificación de GS1 GTIN-14, piso de margen del 15% y estándares OTIF en `.agents/rules/retail-standards.md` y creación de `.agents/skills/margin-otif-audit/SKILL.md` | [Guía Lab 02 (ES)](labs/lab-02-rules-and-skills/README.es.md) \| [EN](labs/lab-02-rules-and-skills/README.md)<br>[Prompts (ES)](labs/lab-02-rules-and-skills/PROMPTS.es.md) \| [EN](labs/lab-02-rules-and-skills/PROMPTS.md)<br>[PDF (ES)](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_ES.pdf) \| [EN](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_EN.pdf) | `labs/lab-02-rules-and-skills/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Lab 03** | `02:00 - 02:55` | **Servidor FastMCP, Hooks Deterministas y Gobernanza Empresarial**: Construcción de `mcp_server/retail_mcp.py`, `.agents/mcp_config.json`, hook `PreToolUse` (`scripts/margin_guard_hook.py`) y Seguridad en Gemini Enterprise / Google Cloud | [Guía Lab 03 (ES)](labs/lab-03-mcp-and-hooks/README.es.md) \| [EN](labs/lab-03-mcp-and-hooks/README.md)<br>[Prompts (ES)](labs/lab-03-mcp-and-hooks/PROMPTS.es.md) \| [EN](labs/lab-03-mcp-and-hooks/PROMPTS.md)<br>[PDF (ES)](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_ES.pdf) \| [EN](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_EN.pdf) | `labs/lab-03-mcp-and-hooks/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Lab 04** | `02:55 - 03:45` | **Capstone Multi-Agente (Google ADK, A2A, `adk web`, Cloud Run y Gemini Enterprise)**: Enrutamiento Omnicanal (`fulfillment_router.py`), Orquestador ADK + A2A (`adk_a2a_orchestrator.py`), pruebas con `adk web` y despliegue Terraform a Cloud Run y Gemini Enterprise | [Guía Lab 04 (ES)](labs/lab-04-multi-agent-capstone/README.es.md) \| [EN](labs/lab-04-multi-agent-capstone/README.md)<br>[Prompts (ES)](labs/lab-04-multi-agent-capstone/PROMPTS.es.md) \| [EN](labs/lab-04-multi-agent-capstone/PROMPTS.md)<br>[PDF (ES)](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_ES.pdf) \| [EN](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_EN.pdf) | `labs/lab-04-multi-agent-capstone/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
 | **Cierre** | `03:45 - 04:00` | Patrones de despliegue en producción y Q&A con arquitectos de Tryolabs | [Guía Lab 04 (ES)](labs/lab-04-multi-agent-capstone/README.es.md) | `./labs/lab-04-multi-agent-capstone/verify.sh` |
 
 ---
@@ -147,3 +147,54 @@ Las empresas retail requieren defensa en profundidad a través de identidad clou
 - **Protección contra Acceso Fuera del Workspace**: Impide que los agentes lean o modifiquen archivos fuera del directorio `/antigravity-workshop-retail` (protegiendo `~/.ssh`, `~/.aws` y credenciales locales).
 - **Allowlist / Denylist de Comandos y Navegador**: Autoriza ejecutores de pruebas seguros (`.venv/bin/python -m pytest`), bloquea comandos destructivos (`rm -rf`, `curl`) y restringe `/browser` a `http://127.0.0.1:8002`.
 - **Hooks Deterministas de Ciclo de Vida (`.agents/hooks.json`)**: Ejecuta validación determinista previa a la herramienta (`scripts/margin_guard_hook.py`) antes de cualquier modificación de archivo, bloqueando intentos de desactivar el piso de margen del 15% con `"decision": "deny"` y registrando cada decisión en `data/logs/hook_compliance_audit.jsonl`.
+
+---
+
+## 6. Estructura del Repositorio
+
+```text
+antigravity-workshop-retail/
+├── README.md / README.es.md                  # Guías Bilingües del Taller (EN/ES)
+├── install.sh / install.ps1                  # Inicializador multiplataforma de entorno y base de datos
+├── Dockerfile / .dockerignore                # Definición de contenedor para producción en Cloud Run
+├── requirements.txt / pyproject.toml         # Dependencias de Python (incluyendo google-adk y mcp)
+├── adk_agents/
+│   └── retail_pulse/                         # Paquete Google ADK para pruebas locales con `adk web`
+│       ├── __init__.py
+│       └── agent.py                          # Define `root_agent` + sub-agentes WMS y Merchandising
+├── infra/
+│   └── terraform/                            # Terraform IaC para Cloud Run, Artifact Registry e IAM
+│       ├── main.tf / variables.tf / outputs.tf / versions.tf
+│       └── terraform.tfvars.example
+├── deploy/
+│   ├── deploy_gcp.sh / deploy_gcp.ps1        # Script de despliegue Cloud Build + Terraform Cloud Run
+│   └── register_gemini_enterprise_agent.sh   # Registra el Agente A2A de Cloud Run en Gemini Enterprise
+├── data/
+│   ├── seed_retail_data.py                   # Generador determinista de datos (SQLite + CSV + JSONL)
+│   ├── retail_pulse.db                       # Base de datos SQLite inicializada
+│   ├── exports/                              # Exportaciones CSV comerciales (contratos, inventario, órdenes)
+│   └── logs/                                 # Webhooks POS/WMS y hook_compliance_audit.jsonl
+├── src/
+│   ├── main.py                               # Aplicación FastAPI, endpoints REST y endpoints A2A
+│   ├── database.py / models.py               # Conexión SQLite y esquemas Pydantic
+│   ├── agents/
+│   │   └── adk_a2a_orchestrator.py           # Orquestador Multi-Agente Google ADK y A2A (Lab 04)
+│   ├── services/                             # promo_pricing, inventory_atp, fulfillment_router
+│   └── static/                               # index.html Command Center y tryolabs-logo.png
+├── mcp_server/
+│   └── retail_mcp.py                         # Servidor FastMCP exponiendo 4 herramientas retail en vivo
+├── scripts/
+│   ├── run_otif_margin_audit.py              # CLI de auditoría para la Skill del Lab 02
+│   ├── margin_guard_hook.py                  # Hook determinista PreToolUse de cumplimiento (Lab 03)
+│   └── run_adk_web.sh                        # Inicia la interfaz local multi-agente `adk web` (Lab 04)
+├── labs/
+│   ├── lab-01-margin-inventory-triage/       # Starter, Solution, README (EN/ES), PROMPTS (EN/ES), PDF (EN/ES)
+│   ├── lab-02-rules-and-skills/              # Starter, Solution, README (EN/ES), PROMPTS (EN/ES), PDF (EN/ES)
+│   ├── lab-03-mcp-and-hooks/                 # Starter, Solution, README (EN/ES), PROMPTS (EN/ES), PDF (EN/ES)
+│   └── lab-04-multi-agent-capstone/          # Starter, Solution, README (EN/ES), PROMPTS (EN/ES), PDF (EN/ES)
+└── tests/
+    ├── test_lab01_triage.py                  # 6 pruebas para el Lab 01
+    ├── test_lab02_rules_skills.py            # 4 pruebas para el Lab 02
+    ├── test_lab03_mcp_hooks.py               # 3 pruebas para el Lab 03
+    └── test_lab04_capstone.py                # 7 pruebas para el Lab 04 (20 pruebas en total)
+```

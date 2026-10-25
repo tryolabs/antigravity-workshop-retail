@@ -6,7 +6,7 @@
 
 **Impartido por Tryolabs • Potenciado por Google Antigravity y Gemini Enterprise**
 
-> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md)
+> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES](./LAB_02_INSTRUCTIONS_ES.pdf) | [EN](./LAB_02_INSTRUCTIONS_EN.pdf)
 
 ---
 
@@ -26,7 +26,7 @@ En el **Laboratorio 02**, transformarás a Antigravity en un **Experto de Domini
 
 ## 2. Inicialización del Laboratorio
 
-Ejecuta el instalador del Laboratorio 02 (aplica automáticamente la solución del Laboratorio 01 primero):
+Ejecuta el instalador del Laboratorio 02 (aplica automáticamente la solución del Laboratorio 01 primero para que nadie se quede atrás):
 
 ```bash
 ./labs/lab-02-rules-and-skills/install.sh
@@ -38,11 +38,31 @@ Ejecuta el instalador del Laboratorio 02 (aplica automáticamente la solución d
 
 Abre [PROMPTS.es.md](./PROMPTS.es.md) y ejecuta los prompts en orden:
 
-1. **Crear `GEMINI.md` y `.agents/rules/retail-standards.md`** con las reglas financieras (`Decimal`, `ROUND_HALF_UP`), validación GS1 (`gtin_14`), pisos de margen (`contract_min_margin_floor_pct`), True ATP (`unprocessed_webhook_delta_qty`) y penalidades OTIF (`otif_target_pct`).
-2. **Crear la Habilidad `.agents/skills/margin-otif-audit/SKILL.md`** con frontmatter YAML (`name: margin-otif-audit`, `description: ...`) que invoque `scripts/run_otif_margin_audit.py`.
-3. **Invocar la Habilidad y Verificar**:
-   ```bash
-   ./labs/lab-02-rules-and-skills/verify.sh
-   ```
+### Paso 3.1: Generar `GEMINI.md` y `.agents/rules/retail-standards.md`
+Utiliza el **Prompt de Reglas del Espacio de Trabajo** en `PROMPTS.es.md` (o `/plan`) para crear:
+- `GEMINI.md` en la raíz del repositorio (`>= 300` caracteres) documentando las tablas de la base de datos (`sku_catalog`, `wms_inventory`, `vendor_contracts`, `promo_campaigns`, `omnichannel_orders`) y las reglas innegociables (`Decimal`, `ROUND_HALF_UP`, `gtin_14`, `contract_min_margin_floor_pct`, `unprocessed_webhook_delta_qty`).
+- `.agents/rules/retail-standards.md` documentando precisión financiera, estándares GS1/RFID, True ATP y reglas de penalidades OTIF (`otif_target_pct`).
 
-> **Solución de Referencia:** Ejecuta `./labs/lab-02-rules-and-skills/apply_solution.sh`.
+### Paso 3.2: Crear la Habilidad de Divulgación Progresiva (`.agents/skills/margin-otif-audit/SKILL.md`)
+Crea `.agents/skills/margin-otif-audit/SKILL.md` con el frontmatter YAML requerido:
+```yaml
+---
+name: margin-otif-audit
+description: >-
+  Use this skill when asked to audit commercial gross margin leakage, verify True
+  Available-to-Promise (ATP) VIP oversell exposure, or calculate recoverable vendor
+  OTIF contract chargeback penalties backed by EDI 856 ASN logs.
+---
+```
+E incluye instrucciones paso a paso para ejecutar `./.venv/bin/python scripts/run_otif_margin_audit.py` e inspeccionar `data/exports/executive_margin_otif_audit.json` y `.md`.
+
+### Paso 3.3: Activar la Habilidad y Verificar
+Solicita a Antigravity en el chat:
+> *"Ejecuta una auditoría ejecutiva completa de margen bruto, True ATP y penalidades OTIF de proveedores utilizando nuestra habilidad del espacio de trabajo."*
+
+Luego ejecuta el script de verificación:
+```bash
+./labs/lab-02-rules-and-skills/verify.sh
+```
+
+> **Solución de Referencia:** Ejecuta `./labs/lab-02-rules-and-skills/apply_solution.sh` en cualquier momento.

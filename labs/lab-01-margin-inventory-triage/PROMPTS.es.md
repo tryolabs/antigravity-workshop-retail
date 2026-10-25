@@ -4,6 +4,8 @@
 
 # Laboratorio 01 — Guía de Prompts Optimizados de Antigravity (Español)
 
+> **Idioma / Language:** [Español](./PROMPTS.es.md) | [English](./PROMPTS.md) • **Guía del Lab:** [README.es.md](./README.es.md) | [README.md](./README.md) • **PDF:** [ES](./LAB_01_INSTRUCTIONS_ES.pdf) | [EN](./LAB_01_INSTRUCTIONS_EN.pdf)
+
 Utiliza estos prompts listos para copiar y pegar dentro de **Google Antigravity** (Chat Lateral, `/plan`, edición en línea `Cmd+I` o CLI `agy`) para resolver el Laboratorio 01.
 
 ---
