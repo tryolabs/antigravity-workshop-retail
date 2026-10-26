@@ -70,12 +70,25 @@ class ClaimChargebacksRequest(BaseModel):
 
 
 @app.get("/", response_class=HTMLResponse)
-def serve_dashboard(lang: str | None = Query(default=None, description="UI language: en or es")) -> Any:
+def serve_dashboard(
+    lang: str | None = Query(default=None, description="UI language: en or es"),
+    theme: str | None = Query(default=None, description="UI theme: dark or light"),
+) -> Any:
     """Serve the Live Omnichannel Command Center & Commercial Margin Web Dashboard."""
-    if lang and lang.lower() == "es":
+    is_es = bool(lang and lang.lower() == "es")
+    is_light = bool(theme and theme.lower() == "light")
+    if is_es and is_light:
+        f = STATIC_DIR / "index.es.light.html"
+        if f.exists():
+            return FileResponse(str(f))
+    if is_es:
         es_file = STATIC_DIR / "index.es.html"
         if es_file.exists():
             return FileResponse(str(es_file))
+    if is_light:
+        light_file = STATIC_DIR / "index.light.html"
+        if light_file.exists():
+            return FileResponse(str(light_file))
     index_file = STATIC_DIR / "index.html"
     if not index_file.exists():
         return HTMLResponse("<h1>Retail Pulse Dashboard not found</h1>", status_code=404)
@@ -83,12 +96,28 @@ def serve_dashboard(lang: str | None = Query(default=None, description="UI langu
 
 
 @app.get("/es", response_class=HTMLResponse)
-def serve_dashboard_es() -> Any:
+def serve_dashboard_es(theme: str | None = Query(default=None, description="UI theme: dark or light")) -> Any:
     """Serve the Spanish Live Omnichannel Command Center & Commercial Margin Web Dashboard."""
+    if theme and theme.lower() == "light":
+        f = STATIC_DIR / "index.es.light.html"
+        if f.exists():
+            return FileResponse(str(f))
     es_file = STATIC_DIR / "index.es.html"
     if es_file.exists():
         return FileResponse(str(es_file))
-    return serve_dashboard(lang="es")
+    return serve_dashboard(lang="es", theme=theme)
+
+
+@app.get("/light", response_class=HTMLResponse)
+def serve_dashboard_light(lang: str | None = Query(default=None, description="UI language: en or es")) -> Any:
+    """Serve the Light-Mode Live Omnichannel Command Center Web Dashboard."""
+    return serve_dashboard(lang=lang, theme="light")
+
+
+@app.get("/es/light", response_class=HTMLResponse)
+def serve_dashboard_es_light() -> Any:
+    """Serve the Spanish Light-Mode Live Omnichannel Command Center Web Dashboard."""
+    return serve_dashboard(lang="es", theme="light")
 
 
 @app.get("/api/v1/health")

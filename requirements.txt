@@ -1,5 +1,5 @@
 # ==============================================================================
-# Tryolabs — Google Antigravity 4-Hour Developer Workshop (Retail Edition)
+# Tryolabs — Google Antigravity Developer Workshop (Retail Edition)
 # Platform: Retail Pulse (Omnichannel ATP, Promo Margin Guard & OTIF Engine)
 # Python Dependencies for Retail Labs 01, 02, 03, and 04
 # ==============================================================================

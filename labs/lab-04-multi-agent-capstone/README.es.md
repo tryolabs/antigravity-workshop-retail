@@ -4,9 +4,9 @@
 
 # Lab 04: Capstone Multi-Agente — Google ADK, Protocolo A2A, Enrutamiento Omnicanal y Despliegue en Gemini Enterprise
 
-**Duración**: 45 Minutos | **Perfil**: Track Técnico y Comercial | **Prerrequisitos**: Labs 01, 02 y 03 Completados
+**Perfil**: Track Técnico y Comercial | **Prerrequisitos**: Labs 01, 02 y 03 Completados
 
-> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES](./LAB_04_INSTRUCTIONS_ES.pdf) | [EN](./LAB_04_INSTRUCTIONS_EN.pdf)
+> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES (Oscuro)](./LAB_04_INSTRUCTIONS_ES.pdf) | [ES (Claro)](./LAB_04_INSTRUCTIONS_ES_LIGHT.pdf) | [EN (Dark)](./LAB_04_INSTRUCTIONS_EN.pdf) | [EN (Light)](./LAB_04_INSTRUCTIONS_EN_LIGHT.pdf)
 
 ---
 

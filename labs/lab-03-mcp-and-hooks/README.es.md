@@ -4,9 +4,9 @@
 
 # Laboratorio 03: Servidor MCP de Retail, Hooks Deterministas de Margen y Gobernanza de Seguridad Empresarial
 
-**Duración**: 45 Minutos | **Perfil**: Track Técnico y Comercial | **Prerrequisitos**: Laboratorio 02 Completado
+**Perfil**: Track Técnico y Comercial | **Prerrequisitos**: Laboratorio 02 Completado
 
-> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES](./LAB_03_INSTRUCTIONS_ES.pdf) | [EN](./LAB_03_INSTRUCTIONS_EN.pdf)
+> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES (Oscuro)](./LAB_03_INSTRUCTIONS_ES.pdf) | [ES (Claro)](./LAB_03_INSTRUCTIONS_ES_LIGHT.pdf) | [EN (Dark)](./LAB_03_INSTRUCTIONS_EN.pdf) | [EN (Light)](./LAB_03_INSTRUCTIONS_EN_LIGHT.pdf)
 
 ---
 

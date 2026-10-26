@@ -6,7 +6,7 @@
 
 **Impartido por Tryolabs • Potenciado por Google Antigravity y Gemini Enterprise**
 
-> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES](./LAB_02_INSTRUCTIONS_ES.pdf) | [EN](./LAB_02_INSTRUCTIONS_EN.pdf)
+> **Idioma / Language:** [Español](./README.es.md) | [English](./README.md) • **Guía de Prompts:** [PROMPTS.es.md](./PROMPTS.es.md) | [PROMPTS.md](./PROMPTS.md) • **PDF:** [ES (Oscuro)](./LAB_02_INSTRUCTIONS_ES.pdf) | [ES (Claro)](./LAB_02_INSTRUCTIONS_ES_LIGHT.pdf) | [EN (Dark)](./LAB_02_INSTRUCTIONS_EN.pdf) | [EN (Light)](./LAB_02_INSTRUCTIONS_EN_LIGHT.pdf)
 
 ---
 

@@ -2,7 +2,7 @@
   <img src="src/static/tryolabs-logo.png" alt="Tryolabs Logo" height="48" />
   <h1>Retail Pulse — Google Antigravity Hands-On Workshop</h1>
   <p><strong>Omnichannel Order, Inventory Sync & Commercial Margin / Vendor Contract Intelligence Platform</strong></p>
-  <p><em>Delivered by <strong>Tryolabs</strong> | 4-Hour Enterprise Retail & Omnichannel Commerce Workshop</em></p>
+  <p><em>Delivered by <strong>Tryolabs</strong> | Enterprise Retail & Omnichannel Commerce Workshop</em></p>
   <p><a href="README.md"><strong>English</strong></a> | <a href="README.es.md"><strong>Español</strong></a></p>
 </div>
 
@@ -55,16 +55,16 @@ This repository supports **both Technical Engineers and Commercial/Operations Ma
 
 ---
 
-## 3. 4-Hour Workshop Curriculum & Lab Matrix
+## 3. Workshop Curriculum & Lab Matrix
 
-| Module | Duration | Focus Area & Antigravity Capabilities | Lab Guide & Prompt Playbook | Automation Scripts |
-| :--- | :--- | :--- | :--- | :--- |
-| **Setup & Briefing** | `00:00 - 00:30` | Environment setup, Retail Pulse Command Center tour, Antigravity IDE + Agent Manager overview | [Quickstart Guide](#4-quickstart-instructions) | `./install.sh` (or `./install.ps1`) |
-| **Lab 01** | `00:30 - 01:15` | **Omnichannel Flash-Sale Triage**: Context `@` mentions, `/plan`, Inline Edit (`Cmd+I`), fixing Promo Margin Stacking (Bug #1A) & Phantom ATP Inventory (Bug #1B) | [Lab 01 Guide (EN)](labs/lab-01-margin-inventory-triage/README.md) \| [ES](labs/lab-01-margin-inventory-triage/README.es.md)<br>[Prompts (EN)](labs/lab-01-margin-inventory-triage/PROMPTS.md) \| [ES](labs/lab-01-margin-inventory-triage/PROMPTS.es.md)<br>[PDF (EN)](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_EN.pdf) \| [ES](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_ES.pdf) | `labs/lab-01-margin-inventory-triage/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Lab 02** | `01:15 - 02:00` | **Customizations (`GEMINI.md`, Rules & Skills)**: Encoding GS1 GTIN-14, 15% margin floor & OTIF standards in `.agents/rules/retail-standards.md` and building `.agents/skills/margin-otif-audit/SKILL.md` | [Lab 02 Guide (EN)](labs/lab-02-rules-and-skills/README.md) \| [ES](labs/lab-02-rules-and-skills/README.es.md)<br>[Prompts (EN)](labs/lab-02-rules-and-skills/PROMPTS.md) \| [ES](labs/lab-02-rules-and-skills/PROMPTS.es.md)<br>[PDF (EN)](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_EN.pdf) \| [ES](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_ES.pdf) | `labs/lab-02-rules-and-skills/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Lab 03** | `02:00 - 02:55` | **FastMCP Server, Deterministic Hooks & Enterprise Governance**: Building `mcp_server/retail_mcp.py`, `.agents/mcp_config.json`, `PreToolUse` hook (`scripts/margin_guard_hook.py`), and Gemini Enterprise / Cloud Security | [Lab 03 Guide (EN)](labs/lab-03-mcp-and-hooks/README.md) \| [ES](labs/lab-03-mcp-and-hooks/README.es.md)<br>[Prompts (EN)](labs/lab-03-mcp-and-hooks/PROMPTS.md) \| [ES](labs/lab-03-mcp-and-hooks/PROMPTS.es.md)<br>[PDF (EN)](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_EN.pdf) \| [ES](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_ES.pdf) | `labs/lab-03-mcp-and-hooks/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Lab 04** | `02:55 - 03:45` | **Multi-Agent Capstone (Google ADK, A2A, `adk web`, Cloud Run & Gemini Enterprise)**: Building Smart Split-Shipment Routing (`fulfillment_router.py`), ADK + A2A Orchestrator (`adk_a2a_orchestrator.py`), testing via `adk web`, and deploying via Terraform to Cloud Run & Gemini Enterprise | [Lab 04 Guide (EN)](labs/lab-04-multi-agent-capstone/README.md) \| [ES](labs/lab-04-multi-agent-capstone/README.es.md)<br>[Prompts (EN)](labs/lab-04-multi-agent-capstone/PROMPTS.md) \| [ES](labs/lab-04-multi-agent-capstone/PROMPTS.es.md)<br>[PDF (EN)](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_EN.pdf) \| [ES](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_ES.pdf) | `labs/lab-04-multi-agent-capstone/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
-| **Wrap-Up** | `03:45 - 04:00` | Production rollout patterns, Q&A with Tryolabs solutions architects | [Lab 04 Guide (EN)](labs/lab-04-multi-agent-capstone/README.md) | `./labs/lab-04-multi-agent-capstone/verify.sh` |
+| Module | Focus Area & Antigravity Capabilities | Lab Guide & Prompt Playbook | Automation Scripts |
+| :--- | :--- | :--- | :--- |
+| **Setup & Briefing** | Environment setup, Retail Pulse Command Center tour, Antigravity IDE + Agent Manager overview | [Quickstart Guide](#4-quickstart-instructions) | `./install.sh` (or `./install.ps1`) |
+| **Lab 01** | **Omnichannel Flash-Sale Triage**: Context `@` mentions, `/plan`, Inline Edit (`Cmd+I`), fixing Promo Margin Stacking (Bug #1A) & Phantom ATP Inventory (Bug #1B) | [Lab 01 Guide (EN)](labs/lab-01-margin-inventory-triage/README.md) \| [ES](labs/lab-01-margin-inventory-triage/README.es.md)<br>[Prompts (EN)](labs/lab-01-margin-inventory-triage/PROMPTS.md) \| [ES](labs/lab-01-margin-inventory-triage/PROMPTS.es.md)<br>[PDF Dark (EN)](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_EN.pdf) \| [Light (EN)](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_EN_LIGHT.pdf) \| [Dark (ES)](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_ES.pdf) \| [Light (ES)](labs/lab-01-margin-inventory-triage/LAB_01_INSTRUCTIONS_ES_LIGHT.pdf) | `labs/lab-01-margin-inventory-triage/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Lab 02** | **Customizations (`GEMINI.md`, Rules & Skills)**: Encoding GS1 GTIN-14, 15% margin floor & OTIF standards in `.agents/rules/retail-standards.md` and building `.agents/skills/margin-otif-audit/SKILL.md` | [Lab 02 Guide (EN)](labs/lab-02-rules-and-skills/README.md) \| [ES](labs/lab-02-rules-and-skills/README.es.md)<br>[Prompts (EN)](labs/lab-02-rules-and-skills/PROMPTS.md) \| [ES](labs/lab-02-rules-and-skills/PROMPTS.es.md)<br>[PDF Dark (EN)](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_EN.pdf) \| [Light (EN)](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_EN_LIGHT.pdf) \| [Dark (ES)](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_ES.pdf) \| [Light (ES)](labs/lab-02-rules-and-skills/LAB_02_INSTRUCTIONS_ES_LIGHT.pdf) | `labs/lab-02-rules-and-skills/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Lab 03** | **FastMCP Server, Deterministic Hooks & Enterprise Governance**: Building `mcp_server/retail_mcp.py`, `.agents/mcp_config.json`, `PreToolUse` hook (`scripts/margin_guard_hook.py`), and Gemini Enterprise / Cloud Security | [Lab 03 Guide (EN)](labs/lab-03-mcp-and-hooks/README.md) \| [ES](labs/lab-03-mcp-and-hooks/README.es.md)<br>[Prompts (EN)](labs/lab-03-mcp-and-hooks/PROMPTS.md) \| [ES](labs/lab-03-mcp-and-hooks/PROMPTS.es.md)<br>[PDF Dark (EN)](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_EN.pdf) \| [Light (EN)](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_EN_LIGHT.pdf) \| [Dark (ES)](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_ES.pdf) \| [Light (ES)](labs/lab-03-mcp-and-hooks/LAB_03_INSTRUCTIONS_ES_LIGHT.pdf) | `labs/lab-03-mcp-and-hooks/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Lab 04** | **Multi-Agent Capstone (Google ADK, A2A, `adk web`, Cloud Run & Gemini Enterprise)**: Building Smart Split-Shipment Routing (`fulfillment_router.py`), ADK + A2A Orchestrator (`adk_a2a_orchestrator.py`), testing via `adk web`, and deploying via Terraform to Cloud Run & Gemini Enterprise | [Lab 04 Guide (EN)](labs/lab-04-multi-agent-capstone/README.md) \| [ES](labs/lab-04-multi-agent-capstone/README.es.md)<br>[Prompts (EN)](labs/lab-04-multi-agent-capstone/PROMPTS.md) \| [ES](labs/lab-04-multi-agent-capstone/PROMPTS.es.md)<br>[PDF Dark (EN)](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_EN.pdf) \| [Light (EN)](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_EN_LIGHT.pdf) \| [Dark (ES)](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_ES.pdf) \| [Light (ES)](labs/lab-04-multi-agent-capstone/LAB_04_INSTRUCTIONS_ES_LIGHT.pdf) | `labs/lab-04-multi-agent-capstone/{install.sh,verify.sh,apply_solution.sh,deploy_gcp.sh}` |
+| **Wrap-Up** | Production rollout patterns, Q&A with Tryolabs solutions architects | [Lab 04 Guide (EN)](labs/lab-04-multi-agent-capstone/README.md) | `./labs/lab-04-multi-agent-capstone/verify.sh` |
 
 ---
 
@@ -88,8 +88,8 @@ Run the root installer to create the `.venv` virtual environment, install depend
 .\install.ps1
 ```
 
-### 2. Launch the Live Retail Pulse Command Center
-Start the FastAPI server and open `http://127.0.0.1:8002` (English) or `http://127.0.0.1:8002/es` (Spanish — or use the **`EN | ES`** toggle in the top-right header) in your browser:
+### 2. Launch the Live Retail Pulse Command Center (Dark & Light Modes, EN & ES)
+Start the FastAPI server and open `http://127.0.0.1:8002` (English Dark Mode), `http://127.0.0.1:8002/light` (English Light Mode), `http://127.0.0.1:8002/es` (Spanish Dark Mode), or `http://127.0.0.1:8002/es/light` (Spanish Light Mode) — or use the interactive **`EN | ES`** and **`🌙 Dark | ☀ Light`** toggles in the top-right header:
 
 ```bash
 .venv/bin/uvicorn src.main:app --reload --port 8002

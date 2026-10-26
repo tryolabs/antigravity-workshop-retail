@@ -182,6 +182,26 @@
       overflow-x: auto;
       color: #a5f3fc;
     }
+    body.light-mode {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --panel-alt: #f1f5f9;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #0284c7;
+      --success: #16a34a;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --purple: #7c3aed;
+    }
+    body.light-mode .brand h1, body.light-mode h2 { color: var(--text); }
+    body.light-mode .card { box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06); }
+    body.light-mode .lang-btn.active, body.light-mode button { color: #ffffff; }
+    body.light-mode .lang-btn:not(.active) { color: var(--muted); background: transparent; }
+    body.light-mode tr:hover td { background: rgba(2, 132, 199, 0.04); }
+    body.light-mode pre { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+    body.light-mode code { background: #f1f5f9; padding: 2px 5px; border-radius: 4px; color: #0f172a; }
   </style>
 </head>
 <body>
@@ -199,10 +219,14 @@
         </p>
       </div>
     </div>
-    <div style="display: flex; gap: 10px; align-items: center;">
+    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
       <div class="lang-switch" title="Cambiar Idioma / Switch Language">
         <button id="lang-en" class="lang-btn" onclick="setLanguage('en')">EN</button>
         <button id="lang-es" class="lang-btn active" onclick="setLanguage('es')">ES</button>
+      </div>
+      <div class="lang-switch" title="Cambiar Tema / Switch Theme">
+        <button id="theme-dark" class="lang-btn active" onclick="setTheme('dark')">🌙 Oscuro</button>
+        <button id="theme-light" class="lang-btn" onclick="setTheme('light')">☀ Claro</button>
       </div>
       <button id="refreshBtn" onclick="loadDashboard()">Actualizar Telemetría</button>
     </div>
@@ -343,7 +367,9 @@
         badgeOtifAudit: "OTIF Audit",
         vndHeaders: ["Contract", "Vendor", "Target %", "Actual %", "Delayed PO $", "Penalty $", "Status"],
         statusBreachHold: "BREACH HOLD",
-        statusCompliant: "COMPLIANT"
+        statusCompliant: "COMPLIANT",
+        themeDark: "🌙 Dark",
+        themeLight: "☀ Light"
       },
       es: {
         pageTitle: "Retail Pulse | Centro de Comando Omnicanal de Órdenes, Sincronización de Inventario y Margen Comercial",
@@ -385,12 +411,37 @@
         badgeOtifAudit: "Auditoría OTIF",
         vndHeaders: ["Contrato", "Proveedor", "Meta %", "Real %", "OC Retrasada $", "Penalización $", "Estado"],
         statusBreachHold: "RETENCIÓN POR INCUMPLIMIENTO",
-        statusCompliant: "EN CUMPLIMIENTO"
+        statusCompliant: "EN CUMPLIMIENTO",
+        themeDark: "🌙 Oscuro",
+        themeLight: "☀ Claro"
       }
     };
 
+    function detectInitialTheme() {
+      const params = new URLSearchParams(window.location.search);
+      const qTheme = (params.get('theme') || '').toLowerCase();
+      if (qTheme === 'light' || qTheme === 'dark') return qTheme;
+      if (window.location.pathname.endsWith('/light') || window.location.pathname.includes('.light.html') || document.body.dataset.defaultTheme === 'light') return 'light';
+      const saved = localStorage.getItem('workshop_theme');
+      if (saved === 'light' || saved === 'dark') return saved;
+      return 'dark';
+    }
+
     let currentLang = 'es';
+    let currentTheme = detectInitialTheme();
     let cachedDashboardData = null;
+
+    function setTheme(mode) {
+      currentTheme = (mode === 'light') ? 'light' : 'dark';
+      localStorage.setItem('workshop_theme', currentTheme);
+      document.body.classList.toggle('light-mode', currentTheme === 'light');
+      const btnDark = document.getElementById('theme-dark');
+      const btnLight = document.getElementById('theme-light');
+      if (btnDark && btnLight) {
+        btnDark.classList.toggle('active', currentTheme === 'dark');
+        btnLight.classList.toggle('active', currentTheme === 'light');
+      }
+    }
 
     function setLanguage(lang) {
       currentLang = (lang === 'en') ? 'en' : 'es';
@@ -407,6 +458,8 @@
       document.getElementById('hdrBadgeGemini').textContent = t.hdrBadgeGemini;
       document.getElementById('hdrSubtitle').textContent = t.hdrSubtitle;
       document.getElementById('refreshBtn').textContent = t.refreshBtn;
+      document.getElementById('theme-dark').textContent = t.themeDark;
+      document.getElementById('theme-light').textContent = t.themeLight;
 
       document.getElementById('kpi1Title').textContent = t.kpi1Title;
       document.getElementById('kpi2Title').textContent = t.kpi2Title;
@@ -536,6 +589,7 @@
       document.getElementById('simOutput').textContent = JSON.stringify(json, null, 2);
     }
 
+    setTheme(currentTheme);
     setLanguage('es');
     loadDashboard();
     runPromoSim();
